@@ -1,0 +1,17 @@
+{
+  "training_date": "2025-12-03 14:08:30",
+  "training_samples": 338,
+  "test_samples": 85,
+  "best_model": "Gradient Boosting",
+  "best_model_score": 0.9818231707778943,
+  "overfitting_analysis": {
+    "rf_ratio": 0.566228834725047,
+    "xgb_ratio": 0.5542879542712595,
+    "gb_ratio": 0.5449638503886959,
+    "thresholds": {
+      "rmse_ratio_low": 0.8,
+      "rmse_ratio_high": 1.2,
+      "r2_gap": 0.15
+    }
+  }
+}
