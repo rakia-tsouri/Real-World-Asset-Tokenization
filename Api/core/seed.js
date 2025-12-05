@@ -18,25 +18,40 @@ const seedDatabase = async () => {
     console.log('👤 Creating sample users...');
     const users = await User.insertMany([
       {
+        name: 'Ahmed Ben Salem',
+        email: 'ahmed@example.tn',
+        password: '$2a$10$YourHashedPasswordHere', // Pre-hashed to avoid pre-save hook
         accountId: '0.0.1001',
         hederaPublicKey: '302a300506032b6570032100...',
         country: 'Tunisia',
         kycStatus: 'approved',
-        kycApprovedAt: new Date()
+        kycApprovedAt: new Date(),
+        hashpackWalletConnected: true,
+        isVerified: true
       },
       {
+        name: 'Mohammed Al Maktoum',
+        email: 'mohammed@example.ae',
+        password: '$2a$10$YourHashedPasswordHere',
         accountId: '0.0.1002',
         hederaPublicKey: '302a300506032b6570032100...',
         country: 'UAE',
         kycStatus: 'approved',
-        kycApprovedAt: new Date()
+        kycApprovedAt: new Date(),
+        hashpackWalletConnected: true,
+        isVerified: true
       },
       {
+        name: 'Jean Dupont',
+        email: 'jean@example.fr',
+        password: '$2a$10$YourHashedPasswordHere',
         accountId: '0.0.1003',
         hederaPublicKey: '302a300506032b6570032100...',
         country: 'France',
         kycStatus: 'approved',
-        kycApprovedAt: new Date()
+        kycApprovedAt: new Date(),
+        hashpackWalletConnected: true,
+        isVerified: true
       }
     ]);
 
@@ -50,10 +65,13 @@ const seedDatabase = async () => {
         availability_in_tunisia: true,
         valuation: 425000, // USD
         liquidityScore: 75,
+        verificationStatus: 'approved',
+        verificationApprovedAt: new Date(),
         hedera: {
           tokenId: '0.0.5001',
           treasuryAccountId: '0.0.1001',
-          createdTxHash: '0x123abc...'
+          createdTxHash: '0x123abc...',
+          tokenized: true
         }
       },
       {
@@ -64,10 +82,13 @@ const seedDatabase = async () => {
         availability_in_tunisia: true,
         valuation: 1050000, // USD
         liquidityScore: 85,
+        verificationStatus: 'approved',
+        verificationApprovedAt: new Date(),
         hedera: {
           tokenId: '0.0.5002',
           treasuryAccountId: '0.0.1001',
-          createdTxHash: '0x456def...'
+          createdTxHash: '0x456def...',
+          tokenized: true
         }
       },
       {
@@ -78,10 +99,13 @@ const seedDatabase = async () => {
         availability_in_tunisia: true,
         valuation: 360000, // USD
         liquidityScore: 60,
+        verificationStatus: 'approved',
+        verificationApprovedAt: new Date(),
         hedera: {
           tokenId: '0.0.5003',
           treasuryAccountId: '0.0.1001',
-          createdTxHash: '0x789ghi...'
+          createdTxHash: '0x789ghi...',
+          tokenized: true
         }
       },
       {
@@ -92,10 +116,13 @@ const seedDatabase = async () => {
         availability_in_tunisia: true,
         valuation: 760000, // USD
         liquidityScore: 70,
+        verificationStatus: 'approved',
+        verificationApprovedAt: new Date(),
         hedera: {
           tokenId: '0.0.5004',
           treasuryAccountId: '0.0.1001',
-          createdTxHash: '0xabcdef...'
+          createdTxHash: '0xabcdef...',
+          tokenized: true
         }
       },
       {
@@ -106,10 +133,13 @@ const seedDatabase = async () => {
         availability_in_tunisia: false,
         valuation: 2100000, // USD
         liquidityScore: 90,
+        verificationStatus: 'approved',
+        verificationApprovedAt: new Date(),
         hedera: {
           tokenId: '0.0.5005',
           treasuryAccountId: '0.0.1002',
-          createdTxHash: '0x111222...'
+          createdTxHash: '0x111222...',
+          tokenized: true
         }
       },
       {
@@ -120,10 +150,13 @@ const seedDatabase = async () => {
         availability_in_tunisia: false,
         valuation: 4080000, // USD
         liquidityScore: 95,
+        verificationStatus: 'approved',
+        verificationApprovedAt: new Date(),
         hedera: {
           tokenId: '0.0.5006',
           treasuryAccountId: '0.0.1003',
-          createdTxHash: '0x333444...'
+          createdTxHash: '0x333444...',
+          tokenized: true
         }
       },
       {
@@ -134,10 +167,13 @@ const seedDatabase = async () => {
         availability_in_tunisia: false,
         valuation: 2400000, // USD
         liquidityScore: 88,
+        verificationStatus: 'approved',
+        verificationApprovedAt: new Date(),
         hedera: {
           tokenId: '0.0.5007',
           treasuryAccountId: '0.0.1003',
-          createdTxHash: '0x555666...'
+          createdTxHash: '0x555666...',
+          tokenized: true
         }
       },
       {
@@ -148,10 +184,13 @@ const seedDatabase = async () => {
         availability_in_tunisia: false,
         valuation: 5075000, // USD
         liquidityScore: 92,
+        verificationStatus: 'approved',
+        verificationApprovedAt: new Date(),
         hedera: {
           tokenId: '0.0.5008',
           treasuryAccountId: '0.0.1003',
-          createdTxHash: '0x777888...'
+          createdTxHash: '0x777888...',
+          tokenized: true
         }
       }
     ];

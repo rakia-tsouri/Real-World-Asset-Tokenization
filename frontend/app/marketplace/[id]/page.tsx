@@ -50,17 +50,31 @@ export default function AssetDetailPage() {
   const handleBuy = async () => {
     if (!user || !asset) return;
 
+    // Check verification status
+    if (!user.isVerified) {
+      setMessage({ 
+        type: 'error', 
+        text: user.kycStatus !== 'approved' 
+          ? 'Please complete KYC verification to buy assets' 
+          : 'Please connect your wallet to buy assets'
+      });
+      return;
+    }
+
     setMessage(null);
     setTransacting(true);
 
     try {
-      await transactionAPI.buy({ assetId: asset.id, quantity });
+      await transactionAPI.buy({ 
+        assetId: asset._id, 
+        quantity, 
+        pricePerToken: asset.listingPrice || asset.valuation 
+      });
       setMessage({ type: 'success', text: `Successfully purchased ${quantity} tokens!` });
       
       // Refresh asset data
       setTimeout(() => {
         fetchAsset();
-        window.location.reload(); // Reload to update user balance
       }, 1500);
     } catch (error: any) {
       setMessage({ 
@@ -75,11 +89,26 @@ export default function AssetDetailPage() {
   const handleSell = async () => {
     if (!user || !asset) return;
 
+    // Check verification status
+    if (!user.isVerified) {
+      setMessage({ 
+        type: 'error', 
+        text: user.kycStatus !== 'approved' 
+          ? 'Please complete KYC verification to sell assets' 
+          : 'Please connect your wallet to sell assets'
+      });
+      return;
+    }
+
     setMessage(null);
     setTransacting(true);
 
     try {
-      await transactionAPI.sell({ assetId: asset.id, quantity });
+      await transactionAPI.sell({ 
+        assetId: asset._id, 
+        quantity, 
+        pricePerToken: asset.listingPrice || asset.valuation 
+      });
       setMessage({ type: 'success', text: `Successfully sold ${quantity} tokens!` });
       
       // Refresh asset data
@@ -110,8 +139,7 @@ export default function AssetDetailPage() {
 
   if (!user || !asset) return null;
 
-  const totalCost = quantity * asset.pricePerToken;
-  const canAfford = user.walletBalance >= totalCost;
+  const totalCost = quantity * (asset.listingPrice || asset.valuation || 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -222,19 +250,23 @@ export default function AssetDetailPage() {
                 <div className="space-y-2">
                   <Button
                     onClick={handleBuy}
-                    disabled={transacting || !canAfford || asset.availableSupply < quantity}
+                    disabled={transacting || !user.isVerified}
                     className="w-full"
                   >
                     {transacting ? 'Processing...' : `Buy ${quantity} Token${quantity > 1 ? 's' : ''}`}
                   </Button>
 
-                  {!canAfford && (
-                    <p className="text-sm text-red-600">Insufficient balance</p>
+                  {!user.isVerified && (
+                    <p className="text-sm text-amber-600">
+                      {user.kycStatus !== 'approved' 
+                        ? 'Complete KYC verification to buy' 
+                        : 'Connect wallet to buy'}
+                    </p>
                   )}
 
                   <Button
                     onClick={handleSell}
-                    disabled={transacting}
+                    disabled={transacting || !user.isVerified}
                     variant="outline"
                     className="w-full"
                   >
@@ -243,8 +275,8 @@ export default function AssetDetailPage() {
                 </div>
 
                 <div className="text-xs text-gray-500 space-y-1">
-                  <p>• Your Balance: {formatCurrency(user.walletBalance)}</p>
-                  <p>• Available Tokens: {formatNumber(asset.availableSupply)}</p>
+                  <p>• Total Supply: {formatNumber(asset.totalSupply || 1000000)}</p>
+                  <p>• Verification: {asset.verificationStatus}</p>
                 </div>
               </CardContent>
             </Card>

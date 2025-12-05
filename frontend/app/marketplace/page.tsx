@@ -33,11 +33,15 @@ export default function MarketplacePage() {
 
   const fetchAssets = async () => {
     try {
-      const response = await assetAPI.getAll();
-      setAssets(response.data.data);
-      setFilteredAssets(response.data.data);
+      // Fetch all assets including unverified ones for testing
+      const response = await assetAPI.getAll({ includeUnverified: 'true' });
+      console.log('Fetched assets:', response.data);
+      setAssets(response.data.data || []);
+      setFilteredAssets(response.data.data || []);
     } catch (error) {
       console.error('Failed to fetch assets:', error);
+      setAssets([]);
+      setFilteredAssets([]);
     } finally {
       setLoading(false);
     }
@@ -129,8 +133,30 @@ export default function MarketplacePage() {
             </div>
           </>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-gray-600 text-lg">No assets found matching your criteria</p>
+          <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
+            <div className="max-w-md mx-auto">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {searchTerm || selectedType !== 'all' ? 'No assets found' : 'No assets available yet'}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {searchTerm || selectedType !== 'all' 
+                  ? 'Try adjusting your search or filters'
+                  : 'Assets will appear here once they are created and verified'}
+              </p>
+              {!searchTerm && selectedType === 'all' && (
+                <div className="text-sm text-gray-500">
+                  <p>To add your first asset:</p>
+                  <ol className="list-decimal list-inside mt-2 space-y-1">
+                    <li>Complete KYC verification</li>
+                    <li>Connect your HashPack wallet</li>
+                    <li>Go to Dashboard and create a new asset</li>
+                  </ol>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

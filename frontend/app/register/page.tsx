@@ -49,12 +49,12 @@ export default function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-center text-3xl">Create Account</CardTitle>
-          <p className="text-center text-gray-600 mt-2">
+          <p className="text-center text-black mt-2">
             Start investing in tokenized real-world assets
           </p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 text-black">
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
                 {error}

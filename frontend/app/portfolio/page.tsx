@@ -64,22 +64,22 @@ export default function PortfolioPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardContent className="p-6">
-              <p className="text-sm text-gray-600 mb-1">Wallet Balance</p>
-              <p className="text-3xl font-bold">{formatCurrency(user.walletBalance)}</p>
+              <p className="text-sm text-gray-600 mb-1">Total Assets</p>
+              <p className="text-3xl font-bold">{portfolio?.stats?.totalAssets || 0}</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="p-6">
               <p className="text-sm text-gray-600 mb-1">Portfolio Value</p>
-              <p className="text-3xl font-bold">{formatCurrency(portfolio?.totalValue || 0)}</p>
+              <p className="text-3xl font-bold">{formatCurrency(portfolio?.stats?.totalValue || 0)}</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="p-6">
-              <p className="text-sm text-gray-600 mb-1">Total Assets</p>
-              <p className="text-3xl font-bold">{formatCurrency(portfolio?.totalAssets || 0)}</p>
+              <p className="text-sm text-gray-600 mb-1">Listed Assets</p>
+              <p className="text-3xl font-bold">{portfolio?.stats?.listedAssets || 0}</p>
             </CardContent>
           </Card>
         </div>

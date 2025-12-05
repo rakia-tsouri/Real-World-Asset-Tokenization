@@ -34,6 +34,15 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'completed', 'failed'],
     default: 'completed'
+  },
+  // Blockchain-specific fields
+  transactionHash: {
+    type: String,
+    default: null
+  },
+  blockchainNetwork: {
+    type: String,
+    default: 'hedera-testnet'
   }
 }, {
   timestamps: true

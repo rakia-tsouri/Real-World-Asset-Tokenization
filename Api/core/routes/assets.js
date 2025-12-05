@@ -8,12 +8,17 @@ const router = express.Router();
 // @access  Public
 router.get('/', async (req, res) => {
   try {
-    const { availability_in_tunisia, search, sort } = req.query;
+    const { availability_in_tunisia, search, sort, listed } = req.query;
     let query = {};
 
     // Filter by Tunisia availability
     if (availability_in_tunisia !== undefined) {
       query.availability_in_tunisia = availability_in_tunisia === 'true';
+    }
+
+    // Filter by listed status
+    if (listed !== undefined) {
+      query.isListed = listed === 'true';
     }
 
     // Search
@@ -43,6 +48,7 @@ router.get('/', async (req, res) => {
       data: assets
     });
   } catch (error) {
+    console.error('Failed to fetch assets:', error);
     res.status(500).json({
       success: false,
       message: 'Failed to fetch assets',

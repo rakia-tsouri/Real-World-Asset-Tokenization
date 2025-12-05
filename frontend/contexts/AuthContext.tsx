@@ -5,17 +5,25 @@ import { authAPI } from '@/lib/api';
 
 interface User {
   id: string;
+  name: string;
   email: string;
-  fullName: string;
+  fullName?: string;
+  accountId?: string;
   role: string;
-  walletBalance: number;
+  kycStatus: string;
+  hashpackWalletConnected: boolean;
+  isVerified: boolean;
+  country?: string;
+  createdAt: string;
+  kycApprovedAt?: string;
+  hashpackConnectedAt?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, fullName: string) => Promise<void>;
+  register: (email: string, password: string, name: string, country?: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -45,14 +53,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const response = await authAPI.login({ email, password });
-    const { user: userData, token } = response.data.data;
+    const { token, user: userData } = response.data.data;
     localStorage.setItem('token', token);
     setUser(userData);
   };
 
-  const register = async (email: string, password: string, fullName: string) => {
-    const response = await authAPI.register({ email, password, fullName });
-    const { user: userData, token } = response.data.data;
+  const register = async (email: string, password: string, name: string, country?: string) => {
+    const response = await authAPI.register({ name, email, password, country });
+    const { token, user: userData } = response.data.data;
     localStorage.setItem('token', token);
     setUser(userData);
   };

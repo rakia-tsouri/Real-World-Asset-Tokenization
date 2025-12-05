@@ -1,11 +1,75 @@
 import express from 'express';
 import User from '../models/User.js';
 import Portfolio from '../models/Portfolio.js';
+import Asset from '../models/Asset.js';
+import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
+// @route   GET /api/users/profile
+// @desc    Get current user profile
+// @access  Private
+router.get('/profile', authenticate, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select('-password -__v');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: user
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch user profile',
+      error: error.message
+    });
+  }
+});
+
+// @route   GET /api/users/portfolio
+// @desc    Get current user portfolio
+// @access  Private
+router.get('/portfolio', authenticate, async (req, res) => {
+  try {
+    // Get user's assets
+    const myAssets = await Asset.find({ ownerId: req.user.userId })
+      .select('title category valuation listingPrice isListed tokenId createdAt verificationStatus');
+
+    // Calculate portfolio stats
+    const totalValue = myAssets.reduce((sum, asset) => sum + (asset.listingPrice || asset.valuation || 0), 0);
+    const listedAssets = myAssets.filter(a => a.isListed).length;
+    const approvedAssets = myAssets.filter(a => a.verificationStatus === 'approved').length;
+
+    res.json({
+      success: true,
+      data: {
+        assets: myAssets,
+        stats: {
+          totalAssets: myAssets.length,
+          totalValue,
+          listedAssets,
+          approvedAssets
+        }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch portfolio',
+      error: error.message
+    });
+  }
+});
+
 // @route   GET /api/users/:accountId
-// @desc    Get user profile
+// @desc    Get user profile by accountId
 // @access  Public
 router.get('/:accountId', async (req, res) => {
   try {

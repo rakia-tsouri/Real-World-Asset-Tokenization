@@ -12,6 +12,10 @@
   "packageManager": "pnpm@10.18.2",
   "dependencies": {
     "@hashgraph/sdk": "^2.78.0",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "mongoose": "^8.0.3",
+    "body-parser": "^1.20.2"
   }
 }

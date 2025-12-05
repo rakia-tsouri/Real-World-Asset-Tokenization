@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const {
   Client,
   PrivateKey,
@@ -9,7 +10,9 @@ const {
   TokenType,
   TokenSupplyType,
   AccountInfoQuery,
-  TokenGrantKycTransaction
+  TokenGrantKycTransaction,
+  TransferTransaction,
+  TokenAssociateTransaction
 } = require("@hashgraph/sdk");
 
 const User = require("./models/User");
@@ -17,6 +20,7 @@ const Asset = require("./models/Asset");
 const KycRequest = require("./models/KycRequest");
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 
 const {
