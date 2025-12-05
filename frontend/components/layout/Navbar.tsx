@@ -100,6 +100,12 @@ export function Navbar() {
                   Marketplace
                 </Link>
                 <Link
+                  href="/my-assets"
+                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  My Assets
+                </Link>
+                <Link
                   href="/portfolio"
                   className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
                 >

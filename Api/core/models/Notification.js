@@ -22,7 +22,7 @@ const NotificationSchema = new Schema({
   title: { type: String, required: true },
   message: { type: String, required: true },
   read: { type: Boolean, default: false },
-  metadata: { type: Schema.Types.Mixed }, // Additional data (e.g., assetId, reason)
+  metadata: { type: Schema.Types.Mixed },
   createdAt: { type: Date, default: Date.now }
 });
 

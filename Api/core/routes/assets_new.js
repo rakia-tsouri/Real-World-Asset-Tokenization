@@ -10,7 +10,6 @@ import axios from 'axios';
 
 const router = express.Router();
 
-// Configure multer for asset image uploads
 const assetStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = './uploads/assets';
@@ -27,7 +26,7 @@ const assetStorage = multer.diskStorage({
 
 const assetUpload = multer({
   storage: assetStorage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -36,19 +35,15 @@ const assetUpload = multer({
     if (mimetype && extname) {
       return cb(null, true);
     }
-    cb(new Error('Only image files (JPEG, PNG) are allowed'));
+    cb(null, false);
   }
 });
 
-// @route   GET /api/assets
-// @desc    Get all assets (marketplace)
-// @access  Public
 router.get('/', async (req, res) => {
   try {
     const { availability_in_tunisia, search, sort, listed, includeUnverified } = req.query;
     let query = {};
 
-    // Only filter by verification status if not explicitly requesting unverified
     if (includeUnverified !== 'true') {
       query.verificationStatus = 'approved';
     }
@@ -75,7 +70,6 @@ router.get('/', async (req, res) => {
 
     console.log(`Found ${assets.length} assets matching query`);
 
-    // Sort
     if (sort === 'price-asc') {
       assets.sort((a, b) => (a.listingPrice || a.valuation || 0) - (b.listingPrice || b.valuation || 0));
     } else if (sort === 'price-desc') {
@@ -103,9 +97,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   GET /api/assets/my-assets
-// @desc    Get current user's assets
-// @access  Private
 router.get('/my-assets', authenticate, async (req, res) => {
   try {
     const assets = await Asset.find({ ownerId: req.user.userId })
@@ -125,9 +116,6 @@ router.get('/my-assets', authenticate, async (req, res) => {
   }
 });
 
-// @route   GET /api/assets/:id
-// @desc    Get single asset
-// @access  Public
 router.get('/:id', async (req, res) => {
   try {
     const asset = await Asset.findById(req.params.id)
@@ -153,32 +141,17 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// @route   POST /api/assets/estimate-price
-// @desc    Get price estimation for asset
-// @access  Private
 router.post('/estimate-price', authenticate, async (req, res) => {
   try {
     const { title, description, category, location, condition, age } = req.body;
 
-    // Call price estimation microservice
     try {
       const estimationServiceUrl = process.env.PRICE_ESTIMATION_SERVICE_URL || 'http://localhost:8002/estimate';
       
-      // TODO: Implement actual price estimation microservice
-      // Expected endpoint: POST http://localhost:8002/estimate
-      // Payload: { title, description, category, location, condition, age }
-      // Response: { estimatedPrice, confidence, currency, factors }
       console.log(`[STUB] Would call price estimation service: ${estimationServiceUrl}`);
       
-      // Simulated price estimation (replace with actual API call when ready)
       const estimatedPrice = Math.floor(Math.random() * 50000) + 10000;
-      const confidence = Math.random() * 0.3 + 0.7; // 70-100%
-
-      // Uncomment when service is ready:
-      // const response = await axios.post(estimationServiceUrl, {
-      //   title, description, category, location, condition, age
-      // });
-      // const { estimatedPrice, confidence } = response.data;
+      const confidence = Math.random() * 0.3 + 0.7;
 
       res.json({
         success: true,
@@ -210,10 +183,31 @@ router.post('/estimate-price', authenticate, async (req, res) => {
   }
 });
 
-// @route   POST /api/assets/create-and-verify
-// @desc    Create asset with verification images
-// @access  Private (requires verified user)
-router.post('/create-and-verify', authenticate, requireVerified, assetUpload.array('images', 3), async (req, res) => {
+router.post('/create-and-verify', authenticate, requireVerified, (req, res, next) => {
+  assetUpload.array('images', 3)(req, res, (err) => {
+    if (err) {
+      if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(400).json({
+            success: false,
+            message: 'File size too large. Maximum size is 10MB per image.'
+          });
+        }
+        if (err.code === 'LIMIT_FILE_COUNT') {
+          return res.status(400).json({
+            success: false,
+            message: 'Too many files. Maximum 3 images allowed.'
+          });
+        }
+      }
+      return res.status(400).json({
+        success: false,
+        message: err.message || 'File upload error'
+      });
+    }
+    next();
+  });
+}, async (req, res) => {
   try {
     const { 
       title, 
@@ -260,7 +254,13 @@ router.post('/create-and-verify', authenticate, requireVerified, assetUpload.arr
       employees,
       valuation,
       equity,
-      registrationNumber
+      registrationNumber,
+      // Tokenization fields
+      totalSupply,
+      symbol,
+      pricePerToken,
+      reservedTokens,
+      availableTokens
     } = req.body;
 
     if (!title) {
@@ -288,7 +288,6 @@ router.post('/create-and-verify', authenticate, requireVerified, assetUpload.arr
     
     const verificationImages = req.files.map(file => `/uploads/assets/${file.filename}`);
 
-    // Build asset data object based on category
     const assetData = {
       title,
       description,
@@ -304,7 +303,6 @@ router.post('/create-and-verify', authenticate, requireVerified, assetUpload.arr
       verificationSubmittedAt: new Date()
     };
 
-    // Add type-specific fields
     if (category === 'real-estate') {
       Object.assign(assetData, {
         propertyType,
@@ -353,30 +351,25 @@ router.post('/create-and-verify', authenticate, requireVerified, assetUpload.arr
       });
     }
 
+    if (totalSupply && symbol && pricePerToken) {
+      assetData.tokenization = {
+        totalSupply: parseInt(totalSupply),
+        symbol: symbol.toUpperCase(),
+        pricePerToken: parseFloat(pricePerToken),
+        reservedTokens: parseInt(reservedTokens) || 0,
+        availableTokens: parseInt(availableTokens) || (parseInt(totalSupply) - (parseInt(reservedTokens) || 0))
+      };
+    }
+
     const newAsset = await Asset.create(assetData);
 
-    // Send images to AI verification service
-    // TODO: Implement AI asset verification microservice
-    // Expected endpoint: POST http://localhost:8003/verify-asset
-    // Payload: { assetId, images, title, description, category }
-    // The AI should analyze images and call back to /api/admin/assets/:id/ai-callback
     try {
       const aiServiceUrl = process.env.AI_ASSET_SERVICE_URL || 'http://localhost:8003/verify-asset';
       console.log(`[STUB] Would send asset images to AI service: ${aiServiceUrl}`);
       console.log(`[STUB] Asset ID: ${newAsset._id}, Images: ${verificationImages.length}`);
       
-      // Uncomment when AI service is ready:
-      // await axios.post(aiServiceUrl, {
-      //   assetId: newAsset._id,
-      //   images: verificationImages,
-      //   title,
-      //   description,
-      //   category,
-      //   callbackUrl: `${process.env.API_URL}/api/admin/assets/${newAsset._id}/ai-callback`
-      // });
     } catch (aiError) {
       console.error('[STUB] AI service not available:', aiError.message);
-      // Don't fail the request if AI service is unavailable
     }
 
     res.status(201).json({
@@ -393,9 +386,6 @@ router.post('/create-and-verify', authenticate, requireVerified, assetUpload.arr
   }
 });
 
-// @route   POST /api/assets/:id/list
-// @desc    List asset for sale
-// @access  Private
 router.post('/:id/list', authenticate, requireVerified, async (req, res) => {
   try {
     const { price } = req.body;
@@ -451,9 +441,6 @@ router.post('/:id/list', authenticate, requireVerified, async (req, res) => {
   }
 });
 
-// @route   POST /api/assets/:id/unlist
-// @desc    Remove asset from marketplace
-// @access  Private
 router.post('/:id/unlist', authenticate, async (req, res) => {
   try {
     const asset = await Asset.findById(req.params.id);
@@ -492,9 +479,6 @@ router.post('/:id/unlist', authenticate, async (req, res) => {
   }
 });
 
-// @route   POST /api/assets/:id/security-analysis
-// @desc    Request security analysis for tokenized asset
-// @access  Private
 router.post('/:id/security-analysis', authenticate, async (req, res) => {
   try {
     const asset = await Asset.findById(req.params.id);
@@ -513,27 +497,11 @@ router.post('/:id/security-analysis', authenticate, async (req, res) => {
       });
     }
 
-    // Call security analysis microservice
-    // TODO: Implement security analysis microservice
-    // Expected endpoint: POST http://localhost:8004/analyze
-    // Payload: { assetId, tokenId, ownerId, category, value }
-    // Response: { securityScore, factors, recommendations }
     try {
       const securityServiceUrl = process.env.SECURITY_ANALYSIS_SERVICE_URL || 'http://localhost:8004/analyze';
       console.log(`[STUB] Would call security analysis service: ${securityServiceUrl}`);
       
-      // Simulated security score (replace with actual API call when ready)
-      const securityScore = Math.floor(Math.random() * 30) + 70; // 70-100
-      
-      // Uncomment when service is ready:
-      // const response = await axios.post(securityServiceUrl, {
-      //   assetId: asset._id,
-      //   tokenId: asset.hedera.tokenId,
-      //   ownerId: asset.ownerId,
-      //   category: asset.category,
-      //   value: asset.listingPrice || asset.valuation
-      // });
-      // const { securityScore, factors, recommendations } = response.data;
+      const securityScore = Math.floor(Math.random() * 30) + 70;
       
       asset.securityScore = securityScore;
       asset.securityAnalysis = {

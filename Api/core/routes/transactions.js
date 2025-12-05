@@ -8,14 +8,12 @@ import {
   buyTokensFromTreasury, 
   sellTokensToTreasury, 
   getTransactionHistory,
-  getTokenBalance 
+  getTokenBalance,
+  associateToken
 } from '../services/hederaService.js';
 
 const router = express.Router();
 
-// @route   GET /api/transactions
-// @desc    Get user's transactions from Hedera blockchain
-// @access  Private
 router.get('/', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
@@ -27,10 +25,8 @@ router.get('/', authenticate, async (req, res) => {
       });
     }
 
-    // Fetch transactions from Hedera Mirror Node
     const hederaTransactions = await getTransactionHistory(user.accountId);
 
-    // Also get local transaction records for additional metadata
     const localTransactions = await Transaction.find({ userId: req.user.userId })
       .populate('assetId', 'title category tokenization.symbol hedera.tokenId')
       .sort({ createdAt: -1 })
@@ -53,9 +49,6 @@ router.get('/', authenticate, async (req, res) => {
   }
 });
 
-// @route   POST /api/transactions/buy
-// @desc    Buy asset tokens (on-chain transaction)
-// @access  Private (Verified users only)
 router.post('/buy', authenticate, requireVerified, async (req, res) => {
   try {
     const { assetId, quantity } = req.body;
@@ -67,7 +60,6 @@ router.post('/buy', authenticate, requireVerified, async (req, res) => {
       });
     }
 
-    // Get user data
     const user = await User.findById(req.user.userId);
     if (!user || !user.accountId) {
       return res.status(400).json({
@@ -76,7 +68,6 @@ router.post('/buy', authenticate, requireVerified, async (req, res) => {
       });
     }
 
-    // Verify asset exists and is tokenized
     const asset = await Asset.findById(assetId);
     if (!asset) {
       return res.status(404).json({
@@ -99,7 +90,6 @@ router.post('/buy', authenticate, requireVerified, async (req, res) => {
       });
     }
 
-    // Check available tokens
     if (quantity > asset.tokenization.availableTokens) {
       return res.status(400).json({
         success: false,
@@ -121,18 +111,28 @@ router.post('/buy', authenticate, requireVerified, async (req, res) => {
       );
     } catch (blockchainError) {
       console.error('Blockchain transaction failed:', blockchainError);
+      
+      if (blockchainError.message.includes('TOKEN_NOT_ASSOCIATED_TO_ACCOUNT') || 
+          blockchainError.message.includes('Token not associated')) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please associate this token with your wallet first using HashPack.',
+          tokenId: asset.hedera.tokenId,
+          instructions: 'Open HashPack wallet and associate the token before purchasing.',
+          error: blockchainError.message
+        });
+      }
+      
       return res.status(500).json({
         success: false,
-        message: 'Blockchain transaction failed. Please ensure your wallet is associated with the token.',
+        message: 'Blockchain transaction failed',
         error: blockchainError.message
       });
     }
 
-    // Update available tokens
     asset.tokenization.availableTokens -= quantity;
     await asset.save();
 
-    // Create local transaction record for metadata
     const transaction = await Transaction.create({
       userId: req.user.userId,
       assetId,
@@ -147,7 +147,6 @@ router.post('/buy', authenticate, requireVerified, async (req, res) => {
       blockchainNetwork: 'hedera-testnet'
     });
 
-    // Update or create portfolio allocation
     let portfolio = await Portfolio.findOne({ userAccountId: user.accountId });
     
     if (!portfolio) {
@@ -188,9 +187,6 @@ router.post('/buy', authenticate, requireVerified, async (req, res) => {
   }
 });
 
-// @route   POST /api/transactions/sell
-// @desc    Sell asset tokens (record transaction)
-// @access  Private (Verified users only)
 router.post('/sell', authenticate, requireVerified, async (req, res) => {
   try {
     const { assetId, quantity, pricePerToken } = req.body;
@@ -202,7 +198,6 @@ router.post('/sell', authenticate, requireVerified, async (req, res) => {
       });
     }
 
-    // Verify asset exists
     const asset = await Asset.findById(assetId);
 
     if (!asset) {
@@ -214,7 +209,6 @@ router.post('/sell', authenticate, requireVerified, async (req, res) => {
 
     const totalAmount = quantity * pricePerToken;
 
-    // Create transaction record
     const transaction = await Transaction.create({
       userId: req.user.userId,
       assetId,
@@ -241,9 +235,6 @@ router.post('/sell', authenticate, requireVerified, async (req, res) => {
   }
 });
 
-// @route   GET /api/transactions/:id
-// @desc    Get transaction details
-// @access  Private
 router.get('/:id', authenticate, async (req, res) => {
   try {
     const transaction = await Transaction.findOne({
@@ -267,6 +258,42 @@ router.get('/:id', authenticate, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to fetch transaction',
+      error: error.message
+    });
+  }
+});
+
+router.post('/associate-token', authenticate, requireVerified, async (req, res) => {
+  try {
+    const { tokenId, privateKey } = req.body;
+
+    if (!tokenId || !privateKey) {
+      return res.status(400).json({
+        success: false,
+        message: 'tokenId and privateKey are required'
+      });
+    }
+
+    const user = await User.findById(req.user.userId);
+    if (!user || !user.accountId) {
+      return res.status(400).json({
+        success: false,
+        message: 'User wallet not connected'
+      });
+    }
+
+    const result = await associateToken(user.accountId, tokenId, privateKey);
+
+    res.json({
+      success: true,
+      message: 'Token associated successfully',
+      data: result
+    });
+  } catch (error) {
+    console.error('Token association error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to associate token',
       error: error.message
     });
   }

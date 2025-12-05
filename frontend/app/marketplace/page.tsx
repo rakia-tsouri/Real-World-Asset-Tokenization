@@ -50,14 +50,18 @@ export default function MarketplacePage() {
   const filterAssets = () => {
     let filtered = [...assets];
 
+    // Filter by category (using 'category' field from backend)
     if (selectedType !== 'all') {
-      filtered = filtered.filter(asset => asset.assetType === selectedType);
+      filtered = filtered.filter(asset => asset.category === selectedType);
     }
 
+    // Search in title and description
     if (searchTerm) {
+      const term = searchTerm.toLowerCase();
       filtered = filtered.filter(asset =>
-        asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        asset.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+        asset.title?.toLowerCase().includes(term) ||
+        asset.description?.toLowerCase().includes(term) ||
+        asset.category?.toLowerCase().includes(term)
       );
     }
 
@@ -80,9 +84,9 @@ export default function MarketplacePage() {
   const assetTypes = [
     { value: 'all', label: 'All Assets' },
     { value: 'real-estate', label: 'Real Estate' },
-    { value: 'commodities', label: 'Commodities' },
-    { value: 'art', label: 'Art' },
-    { value: 'bonds', label: 'Bonds' },
+    { value: 'vehicle', label: 'Vehicles' },
+    { value: 'commodity', label: 'Commodities' },
+    { value: 'company', label: 'Companies' },
   ];
 
   return (
@@ -128,7 +132,7 @@ export default function MarketplacePage() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAssets.map(asset => (
-                <AssetCard key={asset.id} asset={asset} />
+                <AssetCard key={asset._id} asset={asset} />
               ))}
             </div>
           </>

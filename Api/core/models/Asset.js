@@ -10,15 +10,15 @@ const AssetSchema = new Schema({
   ownerAccountId: { type: String },
   ipfsCid: { type: String },
   availability_in_tunisia: { type: Boolean, default: true },
-  valuation: { type: Number }, // in local currency or USD
+  valuation: { type: Number },
   estimatedPrice: { type: Number }, // From price estimation microservice
   liquidityScore: { type: Number, default: 0 },
-  securityScore: { type: Number }, // From security analysis microservice
+  securityScore: { type: Number },
   securityAnalysis: { type: Schema.Types.Mixed },
   
   // Asset verification
   verificationStatus: { type: String, enum: ["not_submitted", "pending", "approved", "rejected"], default: "not_submitted" },
-  verificationImages: [{ type: String }], // URLs to uploaded images (max 3)
+  verificationImages: [{ type: String }],
   verificationSubmittedAt: { type: Date },
   verificationApprovedAt: { type: Date },
   verificationRejectedAt: { type: Date },
@@ -26,13 +26,12 @@ const AssetSchema = new Schema({
   verifiedByAdmin: { type: Schema.Types.ObjectId, ref: "User" },
   aiVerificationResult: { type: Schema.Types.Mixed },
   
-  // Tokenization settings (set by user during creation)
   tokenization: {
-    totalSupply: { type: Number }, // Total number of token fractions
-    symbol: { type: String }, // Token symbol (e.g., "VILLA01")
-    pricePerToken: { type: Number }, // Initial price per token fraction
-    reservedTokens: { type: Number, default: 0 }, // Tokens kept by owner (not for sale)
-    availableTokens: { type: Number }, // Tokens available for trading
+    totalSupply: { type: Number },
+    symbol: { type: String },
+    pricePerToken: { type: Number },
+    reservedTokens: { type: Number, default: 0 },
+    availableTokens: { type: Number },
   },
   
   hedera: {
@@ -45,9 +44,14 @@ const AssetSchema = new Schema({
     decimals: { type: Number, default: 0 }
   },
   
-  // Trading
+  priceHistory: [{
+    date: { type: Date },
+    price: { type: Number },
+    volume: { type: Number, default: 0 }
+  }],
+  
   isListed: { type: Boolean, default: false },
-  listingPrice: { type: Number }, // Deprecated - use pricePerToken
+  listingPrice: { type: Number },
   listedAt: { type: Date },
   
   createdAt: { type: Date, default: Date.now },

@@ -35,7 +35,6 @@ const transactionSchema = new mongoose.Schema({
     enum: ['pending', 'completed', 'failed'],
     default: 'completed'
   },
-  // Blockchain-specific fields
   transactionHash: {
     type: String,
     default: null

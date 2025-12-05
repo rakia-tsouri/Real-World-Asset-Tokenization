@@ -10,7 +10,6 @@ import axios from 'axios';
 
 const router = express.Router();
 
-// Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = './uploads/kyc';
@@ -27,7 +26,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|pdf/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -40,9 +39,6 @@ const upload = multer({
   }
 });
 
-// @route   POST /api/kyc/submit
-// @desc    Submit KYC information and document
-// @access  Private
 router.post('/submit', authenticate, upload.single('document'), async (req, res) => {
   try {
     const { fullName, email, dateOfBirth, address, phoneNumber, country, documentType } = req.body;
@@ -69,7 +65,6 @@ router.post('/submit', authenticate, upload.single('document'), async (req, res)
       });
     }
 
-    // Check if user already has a pending or approved KYC
     const existingKYC = await KYC.findOne({ 
       userId: user._id, 
       status: { $in: ['pending', 'approved'] } 
@@ -84,7 +79,6 @@ router.post('/submit', authenticate, upload.single('document'), async (req, res)
       });
     }
 
-    // Create KYC request
     const kycRequest = await KYC.create({
       userId: user._id,
       fullName: fullName || user.name,
@@ -98,7 +92,6 @@ router.post('/submit', authenticate, upload.single('document'), async (req, res)
       status: 'pending'
     });
 
-    // Update user KYC status
     user.fullName = fullName || user.name;
     user.dateOfBirth = dateOfBirth;
     user.address = address;
@@ -112,27 +105,12 @@ router.post('/submit', authenticate, upload.single('document'), async (req, res)
 
     await user.save();
 
-    // TODO: Send document to AI verification microservice
-    // This will be implemented when the AI service is ready
-    // Expected endpoint: POST http://localhost:8001/verify-kyc
-    // Payload: { kycId, userId, documentUrl, documentType }
-    // The AI service should process the document and call back to /api/kyc/ai-callback
     try {
       const aiServiceUrl = process.env.AI_KYC_SERVICE_URL || 'http://localhost:8001/verify-kyc';
-  // Uncomment when AI service is ready:
-      // await axios.post(aiServiceUrl, {
-      //   kycId: kycRequest._id,
-      //   userId: user._id,
-      //   documentUrl: kycRequest.documentUrl,
-      //   documentType: documentType,
-      //   callbackUrl: `${process.env.API_URL}/api/kyc/ai-callback`
-      // });
     } catch (aiError) {
       console.error('[STUB] AI service not available:', aiError.message);
-      // Don't fail the request if AI service is unavailable
     }
 
-    // Create notification
     await Notification.create({
       userId: user._id,
       userAccountId: user._id,
@@ -160,9 +138,6 @@ router.post('/submit', authenticate, upload.single('document'), async (req, res)
   }
 });
 
-// @route   GET /api/kyc/status
-// @desc    Get KYC status for current user
-// @access  Private
 router.get('/status', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
@@ -194,9 +169,6 @@ router.get('/status', authenticate, async (req, res) => {
   }
 });
 
-// @route   POST /api/kyc/ai-callback
-// @desc    Callback endpoint for AI service to report results
-// @access  Public (should be secured with API key in production)
 router.post('/ai-callback', async (req, res) => {
   try {
     const { userId, result, confidence, details } = req.body;

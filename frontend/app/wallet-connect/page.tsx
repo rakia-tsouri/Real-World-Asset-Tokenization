@@ -20,7 +20,6 @@ export default function WalletConnectPage() {
   }, [user, authLoading, router]);
 
   const handleSuccess = () => {
-    // Refresh the page to update user state
     window.location.reload();
   };
 

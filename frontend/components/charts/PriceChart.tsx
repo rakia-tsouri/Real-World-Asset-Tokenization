@@ -31,10 +31,10 @@ export function PriceChart({ data, title = 'Price History' }: PriceChartProps) {
             />
             <YAxis 
               tick={{ fontSize: 12 }}
-              tickFormatter={(value: number) => `$${value}`}
+              tickFormatter={(value: number) => `${value.toFixed(0)} TND`}
             />
             <Tooltip 
-              formatter={(value: number) => [`$${value.toFixed(2)}`, 'Price']}
+              formatter={(value: number) => [`${value.toFixed(2)} TND`, 'Price']}
               labelFormatter={(label: string) => new Date(label).toLocaleDateString()}
             />
             <Line 

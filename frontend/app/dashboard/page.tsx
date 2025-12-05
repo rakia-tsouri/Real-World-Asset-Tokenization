@@ -80,10 +80,10 @@ export default function DashboardPage() {
   if (!user) return null;
 
   // Aggregate price history from all assets
-  const aggregatePriceData = assets.length > 0
+  const aggregatePriceData = assets.length > 0 && assets[0]?.priceHistory
     ? assets[0].priceHistory.map((point: any, index: number) => {
         const avgPrice = assets.reduce((sum: number, asset: any) => 
-          sum + asset.priceHistory[index].price, 0) / assets.length;
+          sum + (asset.priceHistory?.[index]?.price || 0), 0) / assets.length;
         return {
           date: point.date,
           price: avgPrice,

@@ -6,9 +6,6 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// @route   GET /api/users/profile
-// @desc    Get current user profile
-// @access  Private
 router.get('/profile', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select('-password -__v');
@@ -33,16 +30,11 @@ router.get('/profile', authenticate, async (req, res) => {
   }
 });
 
-// @route   GET /api/users/portfolio
-// @desc    Get current user portfolio
-// @access  Private
 router.get('/portfolio', authenticate, async (req, res) => {
   try {
-    // Get user's assets
     const myAssets = await Asset.find({ ownerId: req.user.userId })
       .select('title category valuation listingPrice isListed tokenId createdAt verificationStatus');
 
-    // Calculate portfolio stats
     const totalValue = myAssets.reduce((sum, asset) => sum + (asset.listingPrice || asset.valuation || 0), 0);
     const listedAssets = myAssets.filter(a => a.isListed).length;
     const approvedAssets = myAssets.filter(a => a.verificationStatus === 'approved').length;
@@ -68,9 +60,6 @@ router.get('/portfolio', authenticate, async (req, res) => {
   }
 });
 
-// @route   GET /api/users/:accountId
-// @desc    Get user profile by accountId
-// @access  Public
 router.get('/:accountId', async (req, res) => {
   try {
     const user = await User.findOne({ accountId: req.params.accountId });
@@ -95,9 +84,6 @@ router.get('/:accountId', async (req, res) => {
   }
 });
 
-// @route   GET /api/users/:accountId/portfolio
-// @desc    Get user portfolio
-// @access  Public
 router.get('/:accountId/portfolio', async (req, res) => {
   try {
     const portfolio = await Portfolio.findOne({ userAccountId: req.params.accountId })
@@ -127,9 +113,6 @@ router.get('/:accountId/portfolio', async (req, res) => {
   }
 });
 
-// @route   PUT /api/users/:accountId/kyc
-// @desc    Update user KYC status
-// @access  Private (Admin only)
 router.put('/:accountId/kyc', async (req, res) => {
   try {
     const { kycStatus } = req.body;

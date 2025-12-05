@@ -1,27 +1,22 @@
 import express from 'express';
 import Asset from '../models/Asset.js';
+import { generatePriceHistory } from '../utils/priceOracle.js';
 
 const router = express.Router();
 
-// @route   GET /api/assets
-// @desc    Get all assets
-// @access  Public
 router.get('/', async (req, res) => {
   try {
     const { availability_in_tunisia, search, sort, listed } = req.query;
     let query = {};
 
-    // Filter by Tunisia availability
     if (availability_in_tunisia !== undefined) {
       query.availability_in_tunisia = availability_in_tunisia === 'true';
     }
 
-    // Filter by listed status
     if (listed !== undefined) {
       query.isListed = listed === 'true';
     }
 
-    // Search
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: 'i' } },
@@ -31,7 +26,6 @@ router.get('/', async (req, res) => {
 
     let assets = await Asset.find(query).populate('ownerId', 'accountId country');
 
-    // Sort
     if (sort === 'valuation-asc') {
       assets.sort((a, b) => (a.valuation || 0) - (b.valuation || 0));
     } else if (sort === 'valuation-desc') {
@@ -41,6 +35,13 @@ router.get('/', async (req, res) => {
     } else if (sort === 'newest') {
       assets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
+
+    assets.forEach(asset => {
+      if (!asset.priceHistory || asset.priceHistory.length === 0) {
+        const basePrice = asset.tokenization?.pricePerToken || asset.valuation || 1000;
+        asset.priceHistory = generatePriceHistory(basePrice, 30);
+      }
+    });
 
     res.json({
       success: true,
@@ -57,9 +58,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route   GET /api/assets/:id
-// @desc    Get single asset
-// @access  Public
 router.get('/:id', async (req, res) => {
   try {
     const asset = await Asset.findById(req.params.id).populate('ownerId', 'accountId country kycStatus');
@@ -69,6 +67,12 @@ router.get('/:id', async (req, res) => {
         success: false,
         message: 'Asset not found'
       });
+    }
+
+    if (!asset.priceHistory || asset.priceHistory.length === 0) {
+      const basePrice = asset.tokenization?.pricePerToken || asset.valuation || 1000;
+      asset.priceHistory = generatePriceHistory(basePrice, 30);
+      // Don't save to DB - just return for display
     }
 
     res.json({
@@ -84,9 +88,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// @route   POST /api/assets
-// @desc    Create new asset
-// @access  Public
 router.post('/', async (req, res) => {
   try {
     const { 
@@ -134,9 +135,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// @route   PUT /api/assets/:id
-// @desc    Update asset
-// @access  Public
 router.put('/:id', async (req, res) => {
   try {
     const asset = await Asset.findById(req.params.id);
@@ -173,9 +171,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// @route   DELETE /api/assets/:id
-// @desc    Delete asset
-// @access  Public
 router.delete('/:id', async (req, res) => {
   try {
     const asset = await Asset.findById(req.params.id);

@@ -19,7 +19,6 @@ const KycRequestSchema = new Schema({
     default: 'pending' 
   },
   
-  // AI Processing
   processedByAI: { type: Boolean, default: false },
   aiResult: {
     result: String,
@@ -28,7 +27,6 @@ const KycRequestSchema = new Schema({
     processedAt: Date
   },
   
-  // Admin Review
   reviewedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   reviewedAt: { type: Date },
   rejectionReason: { type: String },

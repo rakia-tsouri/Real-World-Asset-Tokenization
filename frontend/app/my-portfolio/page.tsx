@@ -42,7 +42,6 @@ export default function MyPortfolio() {
       const assetData = response.data.data;
       setAssets(assetData);
 
-      // Calculate stats
       const totalValue = assetData.reduce(
         (sum: number, asset: Asset) => sum + (asset.listingPrice || asset.estimatedPrice || 0),
         0

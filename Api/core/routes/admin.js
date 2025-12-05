@@ -8,13 +8,9 @@ import { createFungibleToken } from '../services/hederaService.js';
 
 const router = express.Router();
 
-// All routes require admin authentication
 router.use(authenticate);
 router.use(authorize('admin'));
 
-// @route   GET /api/admin/kyc/pending
-// @desc    Get all pending KYC submissions
-// @access  Admin
 router.get('/kyc/pending', async (req, res) => {
   try {
     const pendingKYCs = await KYC.find({ status: 'pending' })
@@ -35,9 +31,6 @@ router.get('/kyc/pending', async (req, res) => {
   }
 });
 
-// @route   GET /api/admin/kyc/:kycId
-// @desc    Get detailed KYC information
-// @access  Admin
 router.get('/kyc/:kycId', async (req, res) => {
   try {
     const kycRequest = await KYC.findById(req.params.kycId)
@@ -63,9 +56,6 @@ router.get('/kyc/:kycId', async (req, res) => {
   }
 });
 
-// @route   POST /api/admin/kyc/:kycId/approve
-// @desc    Approve a KYC request
-// @access  Admin
 router.post('/kyc/:kycId/approve', async (req, res) => {
   try {
     const kycRequest = await KYC.findById(req.params.kycId);
@@ -85,28 +75,24 @@ router.post('/kyc/:kycId/approve', async (req, res) => {
       });
     }
 
-    // Update KYC request
     kycRequest.status = 'approved';
     kycRequest.reviewedBy = req.user.userId;
     kycRequest.reviewedAt = new Date();
     kycRequest.updatedAt = new Date();
     await kycRequest.save();
 
-    // Update user
     user.kycStatus = 'approved';
     user.kycApprovedAt = new Date();
     user.kycRejectedAt = null;
     user.kycRejectionReason = null;
     user.updatedAt = new Date();
     
-    // Check if user is fully verified (KYC + Wallet)
     if (user.hashpackWalletConnected) {
       user.isVerified = true;
     }
 
     await user.save();
 
-    // Create notification
     await Notification.create({
       userId: user._id,
       userAccountId: user.accountId,
@@ -136,9 +122,6 @@ router.post('/kyc/:kycId/approve', async (req, res) => {
   }
 });
 
-// @route   POST /api/admin/kyc/:kycId/reject
-// @desc    Reject a KYC request
-// @access  Admin
 router.post('/kyc/:kycId/reject', async (req, res) => {
   try {
     const { reason } = req.body;
@@ -167,7 +150,6 @@ router.post('/kyc/:kycId/reject', async (req, res) => {
       });
     }
 
-    // Update KYC request
     kycRequest.status = 'rejected';
     kycRequest.rejectionReason = reason;
     kycRequest.reviewedBy = req.user.userId;
@@ -175,7 +157,6 @@ router.post('/kyc/:kycId/reject', async (req, res) => {
     kycRequest.updatedAt = new Date();
     await kycRequest.save();
 
-    // Update user
     user.kycStatus = 'rejected';
     user.kycRejectedAt = new Date();
     user.kycApprovedAt = null;
@@ -185,7 +166,6 @@ router.post('/kyc/:kycId/reject', async (req, res) => {
 
     await user.save();
 
-    // Create notification
     await Notification.create({
       userId: user._id,
       userAccountId: user.accountId,
@@ -213,9 +193,6 @@ router.post('/kyc/:kycId/reject', async (req, res) => {
   }
 });
 
-// @route   GET /api/admin/assets/pending
-// @desc    Get all pending asset verifications
-// @access  Admin
 router.get('/assets/pending', async (req, res) => {
   try {
     const pendingAssets = await Asset.find({ 
@@ -239,9 +216,6 @@ router.get('/assets/pending', async (req, res) => {
   }
 });
 
-// @route   GET /api/admin/assets/:assetId
-// @desc    Get detailed asset information
-// @access  Admin
 router.get('/assets/:assetId', async (req, res) => {
   try {
     const asset = await Asset.findById(req.params.assetId)
@@ -267,13 +241,9 @@ router.get('/assets/:assetId', async (req, res) => {
   }
 });
 
-// @route   POST /api/admin/assets/:assetId/approve
-// @desc    Approve an asset verification and create Hedera token
-// @access  Admin
 router.post('/assets/:assetId/approve', async (req, res) => {
   try {
     const { 
-      // Allow admin to override tokenization parameters
       totalSupply,
       symbol,
       pricePerToken,
@@ -289,7 +259,6 @@ router.post('/assets/:assetId/approve', async (req, res) => {
       });
     }
 
-    // Update tokenization parameters if admin provided overrides
     if (totalSupply !== undefined) asset.tokenization.totalSupply = totalSupply;
     if (symbol !== undefined) asset.tokenization.symbol = symbol;
     if (pricePerToken !== undefined) asset.tokenization.pricePerToken = pricePerToken;
@@ -298,7 +267,6 @@ router.post('/assets/:assetId/approve', async (req, res) => {
       asset.tokenization.availableTokens = asset.tokenization.totalSupply - reservedTokens;
     }
 
-    // Validate tokenization data
     if (!asset.tokenization.totalSupply || !asset.tokenization.symbol || !asset.tokenization.pricePerToken) {
       return res.status(400).json({
         success: false,
@@ -306,7 +274,6 @@ router.post('/assets/:assetId/approve', async (req, res) => {
       });
     }
 
-    // Create Hedera fungible token
     let tokenCreationResult;
     try {
       tokenCreationResult = await createFungibleToken({
@@ -317,7 +284,6 @@ router.post('/assets/:assetId/approve', async (req, res) => {
         memo: `${asset.category} - ${asset.description?.substring(0, 50) || ''}`
       });
 
-      // Save Hedera token data to asset
       asset.hedera.tokenId = tokenCreationResult.tokenId;
       asset.hedera.treasuryAccountId = tokenCreationResult.treasuryAccountId;
       asset.hedera.supplyKey = tokenCreationResult.supplyKey;
@@ -334,18 +300,16 @@ router.post('/assets/:assetId/approve', async (req, res) => {
       });
     }
 
-    // Update asset verification status
     asset.verificationStatus = 'approved';
     asset.verificationApprovedAt = new Date();
     asset.verificationRejectedAt = null;
     asset.verificationRejectionReason = null;
     asset.verifiedByAdmin = req.user.userId;
     asset.updatedAt = new Date();
-    asset.isListed = true; // Automatically list approved assets
+    asset.isListed = true;
 
     await asset.save();
 
-    // Create notification
     await Notification.create({
       userId: asset.ownerId._id,
       userAccountId: asset.ownerId.accountId,
@@ -384,9 +348,6 @@ router.post('/assets/:assetId/approve', async (req, res) => {
   }
 });
 
-// @route   POST /api/admin/assets/:assetId/reject
-// @desc    Reject an asset verification
-// @access  Admin
 router.post('/assets/:assetId/reject', async (req, res) => {
   try {
     const { reason } = req.body;
@@ -416,7 +377,6 @@ router.post('/assets/:assetId/reject', async (req, res) => {
 
     await asset.save();
 
-    // Create notification
     await Notification.create({
       userId: asset.ownerId._id,
       userAccountId: asset.ownerId.accountId,
@@ -444,9 +404,6 @@ router.post('/assets/:assetId/reject', async (req, res) => {
   }
 });
 
-// @route   GET /api/admin/stats
-// @desc    Get admin dashboard statistics
-// @access  Admin
 router.get('/stats', async (req, res) => {
   try {
     const [

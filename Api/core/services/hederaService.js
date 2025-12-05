@@ -1,5 +1,7 @@
-require("dotenv").config();
-const {
+import dotenv from 'dotenv';
+dotenv.config();
+
+import {
   Client,
   PrivateKey,
   TokenCreateTransaction,
@@ -12,9 +14,8 @@ const {
   Hbar,
   TokenAssociateTransaction,
   AccountId
-} = require("@hashgraph/sdk");
+} from '@hashgraph/sdk';
 
-// Environment variables for Hedera operator account
 const {
   HEDERA_OPERATOR_ID,
   HEDERA_OPERATOR_KEY,
@@ -25,39 +26,41 @@ if (!HEDERA_OPERATOR_ID || !HEDERA_OPERATOR_KEY) {
   console.error("ERROR: HEDERA_OPERATOR_ID and HEDERA_OPERATOR_KEY must be set in .env file");
 }
 
-// Initialize Hedera client
 let client = null;
 
 function getClient() {
   if (!client) {
-    client = HEDERA_NETWORK === 'mainnet' 
-      ? Client.forMainnet() 
-      : Client.forTestnet();
-    
-    client.setOperator(HEDERA_OPERATOR_ID, HEDERA_OPERATOR_KEY);
+    try {
+      client = HEDERA_NETWORK === 'mainnet' 
+        ? Client.forMainnet() 
+        : Client.forTestnet();
+      
+      let operatorKey;
+      try {
+        operatorKey = PrivateKey.fromStringED25519(HEDERA_OPERATOR_KEY);
+      } catch (e) {
+        operatorKey = PrivateKey.fromString(HEDERA_OPERATOR_KEY);
+      }
+      console.log(PrivateKey.fromString(HEDERA_OPERATOR_KEY).publicKey.toString());
+      
+      client.setOperator(HEDERA_OPERATOR_ID, operatorKey);
+      
+      console.log(`✅ Hedera client initialized for ${HEDERA_NETWORK}`);
+      console.log(`   Operator Account: ${HEDERA_OPERATOR_ID}`);
+    } catch (error) {
+      console.error('❌ Failed to initialize Hedera client:', error.message);
+      throw new Error(`Hedera client initialization failed: ${error.message}`);
+    }
   }
   return client;
 }
 
-/**
- * Create a fungible token on Hedera for a tokenized asset
- * @param {Object} tokenData - Token configuration data
- * @param {string} tokenData.name - Token name (e.g., "Luxury Villa #42")
- * @param {string} tokenData.symbol - Token symbol (e.g., "VILLA42")
- * @param {number} tokenData.totalSupply - Initial supply (number of fractions)
- * @param {number} tokenData.decimals - Decimal places (default 0 for whole fractions)
- * @param {string} tokenData.memo - Optional memo (e.g., asset description)
- * @returns {Promise<Object>} { tokenId, treasuryAccountId, supplyKey, adminKey, transactionId }
- */
 async function createFungibleToken(tokenData) {
   try {
     const client = getClient();
     
-    // Generate new keys for the token
-    const supplyKey = PrivateKey.generateED25519();
-    const adminKey = PrivateKey.generateED25519();
+    const operatorKey = client.operatorPublicKey;
     
-    // Create the token
     const tokenCreateTx = new TokenCreateTransaction()
       .setTokenName(tokenData.name)
       .setTokenSymbol(tokenData.symbol)
@@ -67,13 +70,13 @@ async function createFungibleToken(tokenData) {
       .setTreasuryAccountId(HEDERA_OPERATOR_ID)
       .setSupplyType(TokenSupplyType.Finite)
       .setMaxSupply(tokenData.totalSupply)
-      .setSupplyKey(supplyKey.publicKey)
-      .setAdminKey(adminKey.publicKey)
+      .setSupplyKey(operatorKey)
+      .setAdminKey(operatorKey)
       .setFreezeDefault(false)
       .setMaxTransactionFee(new Hbar(30));
     
     if (tokenData.memo) {
-      tokenCreateTx.setTokenMemo(tokenData.memo.substring(0, 100)); // Max 100 chars
+      tokenCreateTx.setTokenMemo(tokenData.memo.substring(0, 100));
     }
 
     const tokenCreateSubmit = await tokenCreateTx.execute(client);
@@ -85,8 +88,8 @@ async function createFungibleToken(tokenData) {
     return {
       tokenId,
       treasuryAccountId: HEDERA_OPERATOR_ID,
-      supplyKey: supplyKey.toString(),
-      adminKey: adminKey.toString(),
+      supplyKey: operatorKey.toString(),
+      adminKey: operatorKey.toString(),
       transactionId: tokenCreateSubmit.transactionId.toString()
     };
   } catch (error) {
@@ -95,13 +98,6 @@ async function createFungibleToken(tokenData) {
   }
 }
 
-/**
- * Mint additional tokens (if needed - though initial supply is set at creation)
- * @param {string} tokenId - The token ID
- * @param {string} supplyKeyString - The supply key as string
- * @param {number} amount - Amount to mint
- * @returns {Promise<Object>} { success, newTotalSupply, transactionId }
- */
 async function mintTokens(tokenId, supplyKeyString, amount) {
   try {
     const client = getClient();
@@ -129,13 +125,6 @@ async function mintTokens(tokenId, supplyKeyString, amount) {
   }
 }
 
-/**
- * Associate a token with a user's account (required before they can receive tokens)
- * @param {string} accountId - User's Hedera account ID
- * @param {string} tokenId - The token ID to associate
- * @param {string} accountPrivateKey - User's private key
- * @returns {Promise<Object>} { success, transactionId }
- */
 async function associateToken(accountId, tokenId, accountPrivateKey) {
   try {
     const client = getClient();
@@ -162,15 +151,6 @@ async function associateToken(accountId, tokenId, accountPrivateKey) {
   }
 }
 
-/**
- * Transfer tokens from one account to another
- * @param {string} tokenId - The token ID
- * @param {string} fromAccountId - Sender's account ID
- * @param {string} toAccountId - Recipient's account ID
- * @param {number} amount - Amount to transfer
- * @param {string} fromPrivateKey - Sender's private key (or treasury key if from treasury)
- * @returns {Promise<Object>} { success, transactionId, timestamp }
- */
 async function transferTokens(tokenId, fromAccountId, toAccountId, amount, fromPrivateKey) {
   try {
     const client = getClient();
@@ -198,11 +178,6 @@ async function transferTokens(tokenId, fromAccountId, toAccountId, amount, fromP
   }
 }
 
-/**
- * Get token information
- * @param {string} tokenId - The token ID
- * @returns {Promise<Object>} Token details including name, symbol, supply, etc.
- */
 async function getTokenInfo(tokenId) {
   try {
     const client = getClient();
@@ -227,12 +202,6 @@ async function getTokenInfo(tokenId) {
   }
 }
 
-/**
- * Get account's balance for a specific token
- * @param {string} accountId - Account ID to check
- * @param {string} tokenId - Token ID to check balance for
- * @returns {Promise<number>} Token balance
- */
 async function getTokenBalance(accountId, tokenId) {
   try {
     const client = getClient();
@@ -248,13 +217,6 @@ async function getTokenBalance(accountId, tokenId) {
   }
 }
 
-/**
- * Get transaction history for an account (simplified - uses mirror node API)
- * Note: This requires using Hedera Mirror Node REST API
- * @param {string} accountId - Account ID
- * @param {string} tokenId - Optional: filter by token ID
- * @returns {Promise<Array>} Array of transactions
- */
 async function getTransactionHistory(accountId, tokenId = null) {
   try {
     const mirrorNodeUrl = HEDERA_NETWORK === 'mainnet' 
@@ -264,7 +226,6 @@ async function getTransactionHistory(accountId, tokenId = null) {
     let url = `${mirrorNodeUrl}/api/v1/transactions?account.id=${accountId}&limit=100&order=desc`;
     
     if (tokenId) {
-      // Note: Mirror node API syntax for token transfers
       url += `&transactiontype=CRYPTOTRANSFER`;
     }
 
@@ -278,33 +239,37 @@ async function getTransactionHistory(accountId, tokenId = null) {
   }
 }
 
-/**
- * Buy tokens from treasury (simplified version)
- * Transfers tokens from treasury to buyer
- * @param {string} tokenId - Token ID
- * @param {string} buyerAccountId - Buyer's account ID
- * @param {number} tokenAmount - Amount of tokens to buy
- * @param {number} totalPriceUSD - Total price in USD (for record keeping)
- * @returns {Promise<Object>} Transaction result
- */
-async function buyTokensFromTreasury(tokenId, buyerAccountId, tokenAmount, totalPriceUSD) {
+async function buyTokensFromTreasury(tokenId, buyerAccountId, tokenAmount, totalPriceTND) {
   try {
-    // Transfer tokens from treasury to buyer
-    // In production, you'd also handle HBAR/USD payment here
-    const result = await transferTokens(
-      tokenId,
-      HEDERA_OPERATOR_ID, // from treasury
-      buyerAccountId,
-      tokenAmount,
-      HEDERA_OPERATOR_KEY // treasury private key
-    );
+    const client = getClient();
 
-    console.log(`✅ Sold ${tokenAmount} tokens to ${buyerAccountId} for $${totalPriceUSD}`);
+    let result;
+    try {
+      result = await transferTokens(
+        tokenId,
+        HEDERA_OPERATOR_ID, // from treasury
+        buyerAccountId,
+        tokenAmount,
+        HEDERA_OPERATOR_KEY
+      );
+    } catch (transferError) {
+      if (transferError.message.includes('TOKEN_NOT_ASSOCIATED_TO_ACCOUNT')) {
+        console.log(`⚠️ Buyer ${buyerAccountId} not associated with token ${tokenId}. Auto-associating...`);
+        
+        throw new Error(
+          'Token not associated to account. Please associate the token with your HashPack wallet first. ' +
+          `Token ID: ${tokenId}`
+        );
+      }
+      throw transferError;
+    }
+
+    console.log(`✅ Sold ${tokenAmount} tokens to ${buyerAccountId} for ${totalPriceTND} TND`);
 
     return {
       ...result,
       tokenAmount,
-      totalPriceUSD,
+      totalPriceTND,
       type: 'buy'
     };
   } catch (error) {
@@ -313,32 +278,22 @@ async function buyTokensFromTreasury(tokenId, buyerAccountId, tokenAmount, total
   }
 }
 
-/**
- * Sell tokens back to treasury (or to marketplace)
- * @param {string} tokenId - Token ID
- * @param {string} sellerAccountId - Seller's account ID
- * @param {string} sellerPrivateKey - Seller's private key
- * @param {number} tokenAmount - Amount of tokens to sell
- * @param {number} totalPriceUSD - Total price in USD
- * @returns {Promise<Object>} Transaction result
- */
-async function sellTokensToTreasury(tokenId, sellerAccountId, sellerPrivateKey, tokenAmount, totalPriceUSD) {
+async function sellTokensToTreasury(tokenId, sellerAccountId, sellerPrivateKey, tokenAmount, totalPriceTND) {
   try {
-    // Transfer tokens from seller back to treasury
     const result = await transferTokens(
       tokenId,
       sellerAccountId,
-      HEDERA_OPERATOR_ID, // to treasury
+      HEDERA_OPERATOR_ID,
       tokenAmount,
       sellerPrivateKey
     );
 
-    console.log(`✅ Bought ${tokenAmount} tokens from ${sellerAccountId} for $${totalPriceUSD}`);
+    console.log(`✅ Bought ${tokenAmount} tokens from ${sellerAccountId} for ${totalPriceTND} TND`);
 
     return {
       ...result,
       tokenAmount,
-      totalPriceUSD,
+      totalPriceTND,
       type: 'sell'
     };
   } catch (error) {
@@ -347,7 +302,7 @@ async function sellTokensToTreasury(tokenId, sellerAccountId, sellerPrivateKey, 
   }
 }
 
-module.exports = {
+export {
   createFungibleToken,
   mintTokens,
   associateToken,

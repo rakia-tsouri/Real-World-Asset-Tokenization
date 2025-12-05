@@ -8,7 +8,6 @@ dotenv.config();
 
 const seedDatabase = async () => {
   try {
-    // Connect to database
     await connectDB();
 
     console.log('🗑️  Clearing existing data...');
@@ -20,7 +19,7 @@ const seedDatabase = async () => {
       {
         name: 'Ahmed Ben Salem',
         email: 'ahmed@example.tn',
-        password: '$2a$10$YourHashedPasswordHere', // Pre-hashed to avoid pre-save hook
+        password: '$2a$10$YourHashedPasswordHere',
         accountId: '0.0.1001',
         hederaPublicKey: '302a300506032b6570032100...',
         country: 'Tunisia',

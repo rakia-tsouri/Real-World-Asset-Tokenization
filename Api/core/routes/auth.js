@@ -6,9 +6,6 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// @route   POST /api/auth/register
-// @desc    Register a new user
-// @access  Public
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password, country } = req.body;
@@ -20,7 +17,6 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({
@@ -29,7 +25,6 @@ router.post('/register', async (req, res) => {
       });
     }
 
-    // Create user
     const newUser = await User.create({
       name,
       email,
@@ -39,7 +34,6 @@ router.post('/register', async (req, res) => {
       role: 'user'
     });
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: newUser._id, email: newUser.email, role: newUser.role },
       process.env.JWT_SECRET || 'your-secret-key',
@@ -71,9 +65,6 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// @route   POST /api/auth/login
-// @desc    Login user
-// @access  Public
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -93,7 +84,6 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({
@@ -102,7 +92,6 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'your-secret-key',
@@ -136,9 +125,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// @route   GET /api/auth/user/:accountId
-// @desc    Get user by Hedera accountId (backward compatibility)
-// @access  Public
 router.get('/user/:accountId', async (req, res) => {
   try {
     const user = await User.findOne({ accountId: req.params.accountId });
@@ -177,9 +163,6 @@ router.get('/user/:accountId', async (req, res) => {
   }
 });
 
-// @route   POST /api/auth/link-hedera
-// @desc    Link Hedera account to existing user
-// @access  Private
 router.post('/link-hedera', authenticate, async (req, res) => {
   try {
     const { accountId, hederaPublicKey } = req.body;
@@ -191,7 +174,6 @@ router.post('/link-hedera', authenticate, async (req, res) => {
       });
     }
 
-    // Check if Hedera account already linked to another user
     const existingHedera = await User.findOne({ accountId, _id: { $ne: req.user.userId } });
     if (existingHedera) {
       return res.status(400).json({
@@ -231,9 +213,6 @@ router.post('/link-hedera', authenticate, async (req, res) => {
   }
 });
 
-// @route   POST /api/auth/connect-wallet
-// @desc    Connect HashPack wallet
-// @access  Private
 router.post('/connect-wallet', authenticate, async (req, res) => {
   try {
     const { walletId } = req.body;
@@ -253,21 +232,18 @@ router.post('/connect-wallet', authenticate, async (req, res) => {
       });
     }
 
-    // Save accountId and wallet info
     user.accountId = walletId;
     user.hashpackWalletConnected = true;
     user.hashpackWalletId = walletId;
     user.hashpackConnectedAt = new Date();
     user.updatedAt = new Date();
     
-    // Check if user is fully verified (KYC + Wallet)
     if (user.kycStatus === 'approved') {
       user.isVerified = true;
     }
 
     await user.save();
 
-    // Create notification
     await Notification.create({
       userId: user._id,
       userAccountId: user.accountId,
@@ -300,9 +276,6 @@ router.post('/connect-wallet', authenticate, async (req, res) => {
   }
 });
 
-// @route   GET /api/auth/me
-// @desc    Get current user profile
-// @access  Private
 router.get('/me', authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select('-__v');
