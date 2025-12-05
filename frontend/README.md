@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RWA Tokenization Platform - Frontend
+
+This is the frontend application for the Real-World Asset (RWA) Tokenization Platform built with Next.js 16, React 19, and TypeScript.
+
+## Features
+
+- 🔐 **Authentication**: User registration and login with JWT
+- 📊 **Dashboard**: Overview of portfolio and market statistics
+- 🏪 **Marketplace**: Browse and search tokenized assets
+- 💰 **Trading**: Buy and sell asset tokens
+- 📈 **Charts**: Real-time price history visualization
+- 👛 **Portfolio**: Track your investments and transactions
+
+## Prerequisites
+
+- Node.js 18+ and npm/yarn/pnpm
+- Core API server running (see `Api/core/README.md`)
 
 ## Getting Started
 
-First, run the development server:
-
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Create environment file:
+```bash
+cp .env.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Update the API URL in `.env.local` if needed:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Start the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+frontend/
+├── app/                    # Next.js app directory
+│   ├── dashboard/         # Dashboard page
+│   ├── marketplace/       # Asset marketplace
+│   │   └── [id]/         # Asset detail page
+│   ├── portfolio/        # User portfolio
+│   ├── login/            # Login page
+│   └── register/         # Registration page
+├── components/            # React components
+│   ├── ui/               # UI components (Button, Input, Card)
+│   ├── layout/           # Layout components (Navbar)
+│   ├── marketplace/      # Marketplace components
+│   └── charts/           # Chart components
+├── contexts/             # React contexts (Auth)
+├── lib/                  # Utilities and API client
+└── public/               # Static assets
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Available Scripts
 
-## Deploy on Vercel
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Key Dependencies
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js 16** - React framework
+- **React 19** - UI library
+- **TypeScript** - Type safety
+- **Tailwind CSS 4** - Styling
+- **Axios** - HTTP client
+- **Recharts** - Charts library
+- **Lucide React** - Icons
+
+## Environment Variables
+
+- `NEXT_PUBLIC_API_URL` - Core API base URL (default: http://localhost:5000/api)
+
+## Notes
+
+- The TypeScript errors for missing packages (axios, recharts, lucide-react) will be resolved once you run `npm install`
+- Make sure the Core API server is running before starting the frontend
+- Default demo wallet balance is $10,000 for new users
