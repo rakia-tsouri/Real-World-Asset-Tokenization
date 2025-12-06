@@ -1,0 +1,6 @@
+.venv/
+backend
+.env.local
+lib
+.next
+node_modules
