@@ -90,8 +90,8 @@ if __name__ == "__main__":
         # Sauvegarder en CSV dans le chemin spécifié
         df.to_csv(OUTPUT_PATH, index=False)
 
-        print(f"\n🎉 Succès ! Le fichier historique a été sauvegardé sous : {OUTPUT_PATH}")
+        print(f"\n Succès ! Le fichier historique a été sauvegardé sous : {OUTPUT_PATH}")
         print("Aperçu des 10 dernières données enregistrées:")
         print(df.tail(10))
     else:
-        print("\n🚫 Échec de la récupération des données. Le fichier CSV n'a pas été créé.")
+        print("\n Échec de la récupération des données. Le fichier CSV n'a pas été créé.")

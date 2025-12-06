@@ -36,11 +36,13 @@ class MLOptimizer:
             ).reset_index()
             self.data = self.data.merge(tx_features, on="symbol", how="left")
 
-        # Toujours créer les colonnes si elles n'existent pas
-        if "total_volume" not in self.data.columns:
-            self.data["total_volume"] = 0
-        if "tx_count" not in self.data.columns:
-            self.data["tx_count"] = 0
+        # Gestion correcte du merge et NaN
+        for col in ["total_volume", "tx_count"]:
+            if f"{col}_y" in self.data.columns:
+                self.data[col] = self.data[f"{col}_y"].fillna(self.data[f"{col}_x"].fillna(0))
+                self.data = self.data.drop(columns=[f"{col}_x", f"{col}_y"])
+            else:
+                self.data[col] = self.data[col].fillna(0)
 
         # fallback si expected_return n'existe pas
         if "expected_return" not in self.data.columns:
@@ -58,24 +60,21 @@ class MLOptimizer:
 
         # Modèle rendement
         y_return = self.data["expected_return"].fillna(0)
-        model_return = RandomForestRegressor(n_estimators=100, random_state=42)
-        model_return.fit(X_scaled, y_return)
-        self.model_return = model_return
-        self.data["pred_return"] = model_return.predict(X_scaled)
+        self.model_return = RandomForestRegressor(n_estimators=100, random_state=42)
+        self.model_return.fit(X_scaled, y_return)
+        self.data["pred_return"] = self.model_return.predict(X_scaled)
 
         # Modèle liquidité
         y_liquidity = self.data["total_volume"].fillna(0)
-        model_liquidity = RandomForestRegressor(n_estimators=100, random_state=42)
-        model_liquidity.fit(X_scaled, y_liquidity)
-        self.model_liquidity = model_liquidity
-        self.data["pred_liquidity"] = model_liquidity.predict(X_scaled)
+        self.model_liquidity = RandomForestRegressor(n_estimators=100, random_state=42)
+        self.model_liquidity.fit(X_scaled, y_liquidity)
+        self.data["pred_liquidity"] = self.model_liquidity.predict(X_scaled)
 
         # Modèle risque
         y_risk = self.data["hist_volatility"].fillna(0)
-        model_risk = RandomForestRegressor(n_estimators=100, random_state=42)
-        model_risk.fit(X_scaled, y_risk)
-        self.model_risk = model_risk
-        self.data["pred_risk"] = model_risk.predict(X_scaled)
+        self.model_risk = RandomForestRegressor(n_estimators=100, random_state=42)
+        self.model_risk.fit(X_scaled, y_risk)
+        self.data["pred_risk"] = self.model_risk.predict(X_scaled)
 
         # Covariance pour optimisation
         self.cov_matrix = np.diag(self.data["hist_volatility"].fillna(0).values ** 2)
@@ -116,7 +115,5 @@ class MLOptimizer:
         if not result.success:
             raise Exception("Optimization failed: " + result.message)
 
-        allocation = dict(zip(symbols, result.x * amount_invest))
-        allocation_percent = {k: v * 100 / amount_invest for k, v in allocation.items()}
+        allocation_percent = dict(zip(symbols, result.x * 100))
         return allocation_percent
-        return allocation
