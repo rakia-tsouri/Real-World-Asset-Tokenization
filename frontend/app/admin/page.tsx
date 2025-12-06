@@ -41,46 +41,49 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto glow-primary"></div>
+          <p className="mt-6 text-foreground-muted text-lg">Loading dashboard...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen gradient-bg py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
+        <h1 className="text-4xl font-bold gradient-text mb-8">Admin Dashboard</h1>
 
         {/* Statistics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <div className="text-sm text-gray-600 mb-1">Total Users</div>
-              <div className="text-3xl font-bold">{stats?.users.total || 0}</div>
+              <div className="text-sm text-foreground-muted mb-2">Total Users</div>
+              <div className="text-3xl font-bold text-foreground">{stats?.users.total || 0}</div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <div className="text-sm text-gray-600 mb-1">Pending KYC</div>
-              <div className="text-3xl font-bold text-yellow-600">
+              <div className="text-sm text-foreground-muted mb-2">Pending KYC</div>
+              <div className="text-3xl font-bold text-warning">
                 {stats?.users.kycPending || 0}
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <div className="text-sm text-gray-600 mb-1">Total Assets</div>
-              <div className="text-3xl font-bold">{stats?.assets.total || 0}</div>
+              <div className="text-sm text-foreground-muted mb-2">Total Assets</div>
+              <div className="text-3xl font-bold text-foreground">{stats?.assets.total || 0}</div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <div className="text-sm text-gray-600 mb-1">Pending Asset Verifications</div>
-              <div className="text-3xl font-bold text-yellow-600">
+              <div className="text-sm text-foreground-muted mb-2">Pending Asset Verifications</div>
+              <div className="text-3xl font-bold text-warning">
                 {stats?.assets.verificationPending || 0}
               </div>
             </CardContent>
@@ -89,33 +92,33 @@ export default function AdminDashboard() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
+          <Card hover className="glass">
             <CardHeader>
-              <h2 className="text-xl font-semibold">KYC Verifications</h2>
+              <h2 className="text-xl font-semibold text-foreground">KYC Verifications</h2>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
               <div className="flex justify-between items-center">
                 <div>
-                  <div className="font-medium">Pending Reviews</div>
-                  <div className="text-sm text-gray-600">
+                  <div className="font-medium text-foreground">Pending Reviews</div>
+                  <div className="text-sm text-foreground-muted">
                     {stats?.users.kycPending || 0} users awaiting verification
                   </div>
                 </div>
-                <Button onClick={() => window.location.href = '/admin/kyc'}>
+                <Button onClick={() => window.location.href = '/admin/kyc'} glow>
                   Review KYC
                 </Button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
                 <div>
-                  <div className="text-sm text-gray-600">Approved</div>
-                  <div className="text-xl font-semibold text-green-600">
+                  <div className="text-sm text-foreground-muted">Approved</div>
+                  <div className="text-xl font-semibold text-success">
                     {stats?.users.kycApproved || 0}
                   </div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-600">Rejected</div>
-                  <div className="text-xl font-semibold text-red-600">
+                  <div className="text-sm text-foreground-muted">Rejected</div>
+                  <div className="text-xl font-semibold text-danger">
                     {stats?.users.kycRejected || 0}
                   </div>
                 </div>
@@ -123,33 +126,33 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardHeader>
-              <h2 className="text-xl font-semibold">Asset Verifications</h2>
+              <h2 className="text-xl font-semibold text-foreground">Asset Verifications</h2>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
               <div className="flex justify-between items-center">
                 <div>
-                  <div className="font-medium">Pending Reviews</div>
-                  <div className="text-sm text-gray-600">
+                  <div className="font-medium text-foreground">Pending Reviews</div>
+                  <div className="text-sm text-foreground-muted">
                     {stats?.assets.verificationPending || 0} assets awaiting verification
                   </div>
                 </div>
-                <Button onClick={() => window.location.href = '/admin/assets'}>
+                <Button onClick={() => window.location.href = '/admin/assets'} glow>
                   Review Assets
                 </Button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
                 <div>
-                  <div className="text-sm text-gray-600">Approved</div>
-                  <div className="text-xl font-semibold text-green-600">
+                  <div className="text-sm text-foreground-muted">Approved</div>
+                  <div className="text-xl font-semibold text-success">
                     {stats?.assets.verificationApproved || 0}
                   </div>
                 </div>
                 <div>
-                  <div className="text-sm text-gray-600">Rejected</div>
-                  <div className="text-xl font-semibold text-red-600">
+                  <div className="text-sm text-foreground-muted">Rejected</div>
+                  <div className="text-xl font-semibold text-danger">
                     {stats?.assets.verificationRejected || 0}
                   </div>
                 </div>

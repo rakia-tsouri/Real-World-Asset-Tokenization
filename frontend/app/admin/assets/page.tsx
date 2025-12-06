@@ -85,17 +85,20 @@ export default function AdminAssetReview() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto glow-primary"></div>
+          <p className="mt-6 text-foreground-muted text-lg">Loading assets...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen gradient-bg py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Asset Verifications</h1>
+          <h1 className="text-4xl font-bold gradient-text">Asset Verifications</h1>
           <Button variant="outline" onClick={() => window.location.href = '/admin'}>
             Back to Dashboard
           </Button>
@@ -103,33 +106,33 @@ export default function AdminAssetReview() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
-            <Card>
+            <Card className="glass">
               <CardHeader>
-                <h2 className="text-xl font-semibold">
+                <h2 className="text-xl font-semibold text-foreground">
                   Pending Reviews ({pendingAssets.length})
                 </h2>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="divide-y max-h-[600px] overflow-y-auto">
+                <div className="divide-y divide-border max-h-[600px] overflow-y-auto">
                   {pendingAssets.length === 0 ? (
-                    <div className="p-6 text-center text-gray-500">
+                    <div className="p-6 text-center text-foreground-muted">
                       No pending asset verifications
                     </div>
                   ) : (
                     pendingAssets.map((asset) => (
                       <div
                         key={asset._id}
-                        className={`p-4 cursor-pointer hover:bg-gray-50 ${
-                          selectedAsset?._id === asset._id ? 'bg-blue-50' : ''
+                        className={`p-4 cursor-pointer transition-colors ${
+                          selectedAsset?._id === asset._id ? 'bg-primary/10 border-l-4 border-l-primary' : 'hover:bg-surface-hover'
                         }`}
                         onClick={() => setSelectedAsset(asset)}
                       >
-                        <div className="font-medium">{asset.title}</div>
-                        <div className="text-sm text-gray-600">{asset.category}</div>
-                        <div className="text-sm text-gray-600">
+                        <div className="font-medium text-foreground">{asset.title}</div>
+                        <div className="text-sm text-foreground-muted">{asset.category}</div>
+                        <div className="text-sm text-foreground-muted">
                           Owner: {asset.ownerId.fullName}
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">
+                        <div className="text-xs text-foreground-subtle mt-1">
                           Submitted: {new Date(asset.verificationSubmittedAt).toLocaleDateString()}
                         </div>
                       </div>
@@ -142,49 +145,49 @@ export default function AdminAssetReview() {
 
           <div className="lg:col-span-2">
             {selectedAsset ? (
-              <Card>
+              <Card className="glass">
                 <CardHeader>
-                  <h2 className="text-xl font-semibold">Asset Details</h2>
+                  <h2 className="text-xl font-semibold text-foreground">Asset Details</h2>
                 </CardHeader>
                 <CardContent className="p-6 space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2">
-                      <label className="text-sm text-gray-600">Title</label>
-                      <div className="font-medium text-lg">{selectedAsset.title}</div>
+                      <label className="text-sm text-foreground-muted">Title</label>
+                      <div className="font-medium text-lg text-foreground">{selectedAsset.title}</div>
                     </div>
                     <div className="col-span-2">
-                      <label className="text-sm text-gray-600">Description</label>
-                      <div className="font-medium">{selectedAsset.description}</div>
+                      <label className="text-sm text-foreground-muted">Description</label>
+                      <div className="font-medium text-foreground">{selectedAsset.description}</div>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Category</label>
-                      <div className="font-medium">{selectedAsset.category}</div>
+                      <label className="text-sm text-foreground-muted">Category</label>
+                      <div className="font-medium text-foreground">{selectedAsset.category}</div>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Estimated Price</label>
-                      <div className="font-medium">${selectedAsset.estimatedPrice}</div>
+                      <label className="text-sm text-foreground-muted">Estimated Price</label>
+                      <div className="font-medium text-success text-lg">{selectedAsset.estimatedPrice} TND</div>
                     </div>
                   </div>
 
-                  <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-2">Owner Information</h3>
+                  <div className="border-t border-border pt-4">
+                    <h3 className="font-semibold mb-3 text-foreground">Owner Information</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm text-gray-600">Name</label>
-                        <div className="font-medium">{selectedAsset.ownerId.fullName}</div>
+                        <label className="text-sm text-foreground-muted">Name</label>
+                        <div className="font-medium text-foreground">{selectedAsset.ownerId.fullName}</div>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">Email</label>
-                        <div className="font-medium">{selectedAsset.ownerId.email}</div>
+                        <label className="text-sm text-foreground-muted">Email</label>
+                        <div className="font-medium text-foreground">{selectedAsset.ownerId.email}</div>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">Hedera Account</label>
-                        <div className="font-medium text-sm">{selectedAsset.ownerId.accountId}</div>
+                        <label className="text-sm text-foreground-muted">Hedera Account</label>
+                        <div className="font-medium text-sm text-foreground">{selectedAsset.ownerId.accountId}</div>
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">KYC Status</label>
+                        <label className="text-sm text-foreground-muted">KYC Status</label>
                         <div className={`font-medium ${
-                          selectedAsset.ownerId.kycStatus === 'approved' ? 'text-green-600' : 'text-yellow-600'
+                          selectedAsset.ownerId.kycStatus === 'approved' ? 'text-success' : 'text-warning'
                         }`}>
                           {selectedAsset.ownerId.kycStatus}
                         </div>
@@ -193,16 +196,16 @@ export default function AdminAssetReview() {
                   </div>
 
                   <div>
-                    <label className="text-sm text-gray-600 block mb-2">
+                    <label className="text-sm text-foreground-muted block mb-3">
                       Verification Images ({selectedAsset.verificationImages.length})
                     </label>
                     <div className="grid grid-cols-3 gap-4">
                       {selectedAsset.verificationImages.map((img, idx) => (
-                        <div key={idx} className="border rounded-lg p-2 bg-gray-50">
+                        <div key={idx} className="border border-border rounded-xl p-2 bg-surface">
                           <img
                             src={`http://localhost:5000${img}`}
                             alt={`Verification ${idx + 1}`}
-                            className="w-full h-auto rounded"
+                            className="w-full h-auto rounded-lg"
                           />
                         </div>
                       ))}
@@ -210,22 +213,22 @@ export default function AdminAssetReview() {
                   </div>
 
                   {selectedAsset.aiVerificationResult && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <h3 className="font-semibold mb-2">AI Verification Result</h3>
-                      <pre className="text-sm">
+                    <div className="bg-accent-muted border border-accent/30 rounded-xl p-5">
+                      <h3 className="font-semibold mb-3 text-accent">AI Verification Result</h3>
+                      <pre className="text-sm text-foreground bg-surface p-3 rounded-lg overflow-x-auto">
                         {JSON.stringify(selectedAsset.aiVerificationResult, null, 2)}
                       </pre>
                     </div>
                   )}
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-foreground-muted mb-2">
                       Rejection Reason (if rejecting)
                     </label>
                     <textarea
                       value={rejectionReason}
                       onChange={(e) => setRejectionReason(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 border border-border bg-surface text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-primary"
                       rows={3}
                       placeholder="Enter reason for rejection..."
                     />
@@ -236,6 +239,7 @@ export default function AdminAssetReview() {
                       onClick={() => handleApprove(selectedAsset._id)}
                       disabled={processing}
                       className="flex-1"
+                      glow
                     >
                       {processing ? 'Processing...' : 'Approve Asset'}
                     </Button>
@@ -251,8 +255,8 @@ export default function AdminAssetReview() {
                 </CardContent>
               </Card>
             ) : (
-              <Card>
-                <CardContent className="p-12 text-center text-gray-500">
+              <Card className="glass">
+                <CardContent className="p-12 text-center text-foreground-muted">
                   Select an asset to review
                 </CardContent>
               </Card>

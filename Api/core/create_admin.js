@@ -12,7 +12,7 @@ async function createAdminUser() {
     console.log('Connected to database');
 
     // Check if admin already exists
-    const existingAdmin = await User.findOne({ email: 'admin@odici.com' });
+    const existingAdmin = await User.findOne({ email: 'admin@carthagegate.com' });
     if (existingAdmin) {
       console.log('Admin user already exists!');
       console.log('Email:', existingAdmin.email);
@@ -24,7 +24,7 @@ async function createAdminUser() {
     // Create admin user (password will be hashed by the pre-save hook)
     const admin = await User.create({
       name: 'Admin User',
-      email: 'admin@odici.com',
+      email: 'admin@carthagegate.com',
       password: 'admin123', // Will be hashed automatically by User model
       role: 'admin',
       kycStatus: 'approved',
@@ -36,7 +36,7 @@ async function createAdminUser() {
     console.log('\n✅ Admin user created successfully!');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('Login Credentials:');
-    console.log('Email: admin@odici.com');
+    console.log('Email: admin@carthagegate.com');
     console.log('Password: admin123');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('\nTo access the admin dashboard:');

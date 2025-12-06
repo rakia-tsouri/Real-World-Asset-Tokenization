@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Lock } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -32,18 +33,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center gradient-bg py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md glass">
         <CardHeader>
-          <CardTitle className="text-center text-3xl">Login to RWA Platform</CardTitle>
-          <p className="text-center text-gray-600 mt-2">
-            Access your tokenized assets
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center glow-primary">
+              <Lock className="w-8 h-8 text-white" />
+            </div>
+          </div>
+          <CardTitle className="text-center text-3xl gradient-text">Welcome Back</CardTitle>
+          <p className="text-center text-foreground-muted mt-2">
+            Access your Carthage Gate portfolio
           </p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              <div className="bg-danger-muted border border-danger text-danger px-4 py-3 rounded-lg">
                 {error}
               </div>
             )}
@@ -70,14 +76,15 @@ export default function LoginPage() {
               type="submit"
               className="w-full"
               disabled={loading}
+              glow
             >
               {loading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
 
-          <p className="text-center mt-4 text-sm text-gray-600">
+          <p className="text-center mt-6 text-sm text-foreground-muted">
             Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link href="/register" className="text-primary hover:text-primary-hover font-medium transition-colors">
               Sign up
             </Link>
           </p>

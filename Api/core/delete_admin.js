@@ -11,13 +11,13 @@ async function deleteAdminUser() {
     console.log('Connected to database');
 
     // Delete admin user
-    const result = await User.deleteOne({ email: 'admin@odici.com' });
+    const result = await User.deleteOne({ email: 'admin@carthagegate.com' });
     
     if (result.deletedCount > 0) {
       console.log('✅ Admin user deleted successfully!');
       console.log('\nNow run: node create_admin.js');
     } else {
-      console.log('❌ No admin user found with email: admin@odici.com');
+      console.log('❌ No admin user found with email: admin@carthagegate.com');
     }
     
     process.exit(0);

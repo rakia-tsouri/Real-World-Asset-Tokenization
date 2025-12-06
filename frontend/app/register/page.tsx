@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { UserPlus } from 'lucide-react';
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState('');
@@ -45,18 +46,23 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center gradient-bg py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md glass">
         <CardHeader>
-          <CardTitle className="text-center text-3xl">Create Account</CardTitle>
-          <p className="text-center text-black mt-2">
-            Start investing in tokenized real-world assets
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center glow-primary">
+              <UserPlus className="w-8 h-8 text-white" />
+            </div>
+          </div>
+          <CardTitle className="text-center text-3xl gradient-text">Join Carthage Gate</CardTitle>
+          <p className="text-center text-foreground-muted mt-2">
+            Start investing in premium tokenized assets
           </p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4 text-black">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              <div className="bg-danger-muted border border-danger text-danger px-4 py-3 rounded-lg">
                 {error}
               </div>
             )}
@@ -101,14 +107,15 @@ export default function RegisterPage() {
               type="submit"
               className="w-full"
               disabled={loading}
+              glow
             >
-              {loading ? 'Creating account...' : 'Sign Up'}
+              {loading ? 'Creating account...' : 'Create Account'}
             </Button>
           </form>
 
-          <p className="text-center mt-4 text-sm text-gray-600">
+          <p className="text-center mt-6 text-sm text-foreground-muted">
             Already have an account?{' '}
-            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link href="/login" className="text-primary hover:text-primary-hover font-medium transition-colors">
               Login
             </Link>
           </p>

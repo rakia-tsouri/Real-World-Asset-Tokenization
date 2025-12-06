@@ -17,17 +17,17 @@ interface RealEstateFormProps {
 
 export function RealEstateForm({ data, onChange }: RealEstateFormProps) {
   return (
-    <div className="space-y-4 bg-blue-50 p-6 rounded-lg">
-      <h3 className="font-semibold text-gray-900 mb-4">Property Specifications</h3>
+    <div className="space-y-4 bg-primary-muted border border-primary/30 p-6 rounded-xl">
+      <h3 className="font-semibold text-foreground mb-4">Property Specifications</h3>
       
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Property Type</label>
+          <label className="block text-sm font-medium text-foreground-muted mb-2">Property Type</label>
           <select
             name="propertyType"
             value={data.propertyType}
             onChange={onChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+            className="w-full px-4 py-3 border border-border bg-surface text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-primary"
           >
             <option value="apartment">Apartment</option>
             <option value="house">House</option>
@@ -46,7 +46,6 @@ export function RealEstateForm({ data, onChange }: RealEstateFormProps) {
           onChange={onChange}
           required
           placeholder="e.g., 140"
-          className="text-gray-900"
         />
 
         <Input
@@ -56,7 +55,6 @@ export function RealEstateForm({ data, onChange }: RealEstateFormProps) {
           value={data.bedrooms}
           onChange={onChange}
           placeholder="e.g., 3"
-          className="text-gray-900"
         />
 
         <Input
@@ -66,7 +64,6 @@ export function RealEstateForm({ data, onChange }: RealEstateFormProps) {
           value={data.bathrooms}
           onChange={onChange}
           placeholder="e.g., 2"
-          className="text-gray-900"
         />
 
         <Input
@@ -77,7 +74,6 @@ export function RealEstateForm({ data, onChange }: RealEstateFormProps) {
           onChange={onChange}
           required
           placeholder="e.g., 2020"
-          className="text-gray-900"
         />
 
         <Input
@@ -87,7 +83,6 @@ export function RealEstateForm({ data, onChange }: RealEstateFormProps) {
           value={data.lotSize}
           onChange={onChange}
           placeholder="e.g., 185"
-          className="text-gray-900"
         />
 
         <Input
@@ -97,7 +92,6 @@ export function RealEstateForm({ data, onChange }: RealEstateFormProps) {
           value={data.floors}
           onChange={onChange}
           placeholder="e.g., 2"
-          className="text-gray-900"
         />
 
         <Input
@@ -107,16 +101,15 @@ export function RealEstateForm({ data, onChange }: RealEstateFormProps) {
           value={data.parking}
           onChange={onChange}
           placeholder="e.g., 1"
-          className="text-gray-900"
         />
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Furnished</label>
+          <label className="block text-sm font-medium text-foreground-muted mb-2">Furnished</label>
           <select
             name="furnished"
             value={data.furnished}
             onChange={onChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+            className="w-full px-4 py-3 border border-border bg-surface text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-primary"
           >
             <option value="no">No</option>
             <option value="partially">Partially</option>

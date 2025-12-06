@@ -49,10 +49,10 @@ export default function DashboardPage() {
     if (!user) return null;
     
     const statusConfig = {
-      not_submitted: { color: 'bg-gray-100 text-gray-800', icon: Clock, text: 'KYC Not Submitted' },
-      pending: { color: 'bg-yellow-100 text-yellow-800', icon: Clock, text: 'KYC Pending' },
-      approved: { color: 'bg-green-100 text-green-800', icon: CheckCircle, text: 'KYC Approved' },
-      rejected: { color: 'bg-red-100 text-red-800', icon: AlertCircle, text: 'KYC Rejected' },
+      not_submitted: { color: 'bg-surface-elevated text-foreground-subtle border border-border', icon: Clock, text: 'KYC Not Submitted' },
+      pending: { color: 'bg-warning-muted text-warning border border-warning/30', icon: Clock, text: 'KYC Pending' },
+      approved: { color: 'bg-success-muted text-success border border-success/30', icon: CheckCircle, text: 'KYC Approved' },
+      rejected: { color: 'bg-danger-muted text-danger border border-danger/30', icon: AlertCircle, text: 'KYC Rejected' },
     };
 
     const config = statusConfig[user.kycStatus as keyof typeof statusConfig] || statusConfig.not_submitted;
@@ -68,10 +68,10 @@ export default function DashboardPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto glow-primary"></div>
+          <p className="mt-6 text-foreground-muted text-lg">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -93,39 +93,39 @@ export default function DashboardPage() {
     : [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen gradient-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Welcome, {user.name}!</h1>
-            <p className="text-gray-600 mt-1">{user.email}</p>
+            <h1 className="text-4xl font-bold gradient-text">Welcome, {user.name}!</h1>
+            <p className="text-foreground-muted mt-2 text-lg">Your Tunisian Real Estate Portfolio</p>
           </div>
           {getKYCStatusBadge()}
         </div>
 
         {/* Verification Status Card */}
         {!user.isVerified && (
-          <Card className="mb-8 border-l-4 border-l-blue-600">
+          <Card className="mb-8 border-l-4 border-l-primary glass">
             <CardContent className="p-6">
-              <h2 className="text-xl font-bold mb-4">Complete Your Account Setup</h2>
-              <p className="text-gray-600 mb-4">
-                To start buying and selling assets, you need to complete KYC verification and connect your wallet.
+              <h2 className="text-2xl font-bold text-foreground mb-4">Start Your Investment Journey</h2>
+              <p className="text-foreground-muted mb-6">
+                Complete these steps to start investing in Tunisian real estate with as little as 300 TND.
               </p>
               
               <div className="grid md:grid-cols-2 gap-4">
                 {/* KYC Status */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="flex items-center gap-3 mb-3">
+                <div className="bg-surface p-5 rounded-xl border border-border">
+                  <div className="flex items-center gap-3 mb-4">
                     {user.kycStatus === 'approved' ? (
-                      <CheckCircle className="w-6 h-6 text-green-600" />
+                      <CheckCircle className="w-6 h-6 text-success" />
                     ) : user.kycStatus === 'pending' ? (
-                      <Clock className="w-6 h-6 text-yellow-600" />
+                      <Clock className="w-6 h-6 text-warning" />
                     ) : (
-                      <AlertCircle className="w-6 h-6 text-gray-400" />
+                      <AlertCircle className="w-6 h-6 text-foreground-subtle" />
                     )}
                     <div>
-                      <h3 className="font-semibold">KYC Verification</h3>
-                      <p className="text-sm text-gray-600">
+                      <h3 className="font-semibold text-foreground">KYC Verification</h3>
+                      <p className="text-sm text-foreground-muted">
                         {user.kycStatus === 'approved' ? 'Verified ✓' : 
                          user.kycStatus === 'pending' ? 'Under Review' :
                          user.kycStatus === 'rejected' ? 'Rejected - Resubmit' :
@@ -135,42 +135,42 @@ export default function DashboardPage() {
                   </div>
                   {user.kycStatus === 'not_submitted' || user.kycStatus === 'rejected' ? (
                     <Link href="/kyc">
-                      <Button className="w-full">Submit KYC Documents</Button>
+                      <Button className="w-full" glow>Submit KYC Documents</Button>
                     </Link>
                   ) : user.kycStatus === 'pending' ? (
-                    <p className="text-sm text-gray-600">Your documents are being reviewed. This usually takes 24 hours.</p>
+                    <p className="text-sm text-foreground-muted">Your documents are being reviewed. This usually takes 24 hours.</p>
                   ) : null}
                 </div>
 
                 {/* Wallet Status */}
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="flex items-center gap-3 mb-3">
+                <div className="bg-surface p-5 rounded-xl border border-border">
+                  <div className="flex items-center gap-3 mb-4">
                     {user.hashpackWalletConnected ? (
-                      <CheckCircle className="w-6 h-6 text-green-600" />
+                      <CheckCircle className="w-6 h-6 text-success" />
                     ) : (
-                      <AlertCircle className="w-6 h-6 text-gray-400" />
+                      <AlertCircle className="w-6 h-6 text-foreground-subtle" />
                     )}
                     <div>
-                      <h3 className="font-semibold">HashPack Wallet</h3>
-                      <p className="text-sm text-gray-600">
+                      <h3 className="font-semibold text-foreground">HashPack Wallet</h3>
+                      <p className="text-sm text-foreground-muted">
                         {user.hashpackWalletConnected ? 'Connected ✓' : 'Not Connected'}
                       </p>
                     </div>
                   </div>
                   {!user.hashpackWalletConnected && (
                     <Link href="/wallet-connect">
-                      <Button className="w-full">Connect Wallet</Button>
+                      <Button className="w-full" glow>Connect Wallet</Button>
                     </Link>
                   )}
                   {user.accountId && (
-                    <p className="text-xs text-gray-500 mt-2">Account: {user.accountId}</p>
+                    <p className="text-xs text-foreground-subtle mt-2">Account: {user.accountId}</p>
                   )}
                 </div>
               </div>
 
               {user.kycStatus === 'approved' && user.hashpackWalletConnected && (
-                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-800 font-medium">
+                <div className="mt-6 p-4 bg-success-muted border border-success/30 rounded-xl">
+                  <p className="text-success font-medium">
                     🎉 Your account is fully verified! You can now trade assets.
                   </p>
                 </div>
@@ -181,38 +181,38 @@ export default function DashboardPage() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">My Assets</p>
-                  <p className="text-2xl font-bold">{portfolio?.stats?.totalAssets || 0}</p>
+                  <p className="text-sm text-foreground-muted mb-1">My Assets</p>
+                  <p className="text-3xl font-bold text-foreground">{portfolio?.stats?.totalAssets || 0}</p>
                 </div>
-                <Package className="w-10 h-10 text-blue-600" />
+                <Package className="w-12 h-12 text-primary" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Portfolio Value</p>
-                  <p className="text-2xl font-bold">{formatCurrency(portfolio?.stats?.totalValue || 0)}</p>
+                  <p className="text-sm text-foreground-muted mb-1">Portfolio Value</p>
+                  <p className="text-3xl font-bold text-success">{formatCurrency(portfolio?.stats?.totalValue || 0)}</p>
                 </div>
-                <TrendingUp className="w-10 h-10 text-green-600" />
+                <TrendingUp className="w-12 h-12 text-success" />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Listed for Sale</p>
-                  <p className="text-2xl font-bold">{portfolio?.stats?.listedAssets || 0}</p>
+                  <p className="text-sm text-foreground-muted mb-1">Listed for Sale</p>
+                  <p className="text-3xl font-bold text-accent">{portfolio?.stats?.listedAssets || 0}</p>
                 </div>
-                <DollarSign className="w-10 h-10 text-purple-600" />
+                <Wallet className="w-12 h-12 text-accent" />
               </div>
             </CardContent>
           </Card>
@@ -221,38 +221,38 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div className="grid md:grid-cols-3 gap-4 mb-8">
           <Link href="/marketplace">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card hover className="glass cursor-pointer">
               <CardContent className="p-6 text-center">
-                <Package className="w-12 h-12 text-blue-600 mx-auto mb-3" />
-                <h3 className="font-semibold">Browse Marketplace</h3>
-                <p className="text-sm text-gray-600">Discover tokenized assets</p>
+                <Package className="w-14 h-14 text-primary mx-auto mb-4" />
+                <h3 className="font-semibold text-lg text-foreground">Browse Marketplace</h3>
+                <p className="text-sm text-foreground-muted">Discover tokenized assets</p>
               </CardContent>
             </Card>
           </Link>
 
           <Link href="/create-asset">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card hover className="glass cursor-pointer">
               <CardContent className="p-6 text-center">
-                <DollarSign className="w-12 h-12 text-green-600 mx-auto mb-3" />
-                <h3 className="font-semibold">Create Asset</h3>
-                <p className="text-sm text-gray-600">Tokenize your assets</p>
+                <TrendingUp className="w-14 h-14 text-success mx-auto mb-4" />
+                <h3 className="font-semibold text-lg text-foreground">Create Asset</h3>
+                <p className="text-sm text-foreground-muted">Tokenize your assets</p>
               </CardContent>
             </Card>
           </Link>
 
           <Link href="/my-portfolio">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card hover className="glass cursor-pointer">
               <CardContent className="p-6 text-center">
-                <Wallet className="w-12 h-12 text-purple-600 mx-auto mb-3" />
-                <h3 className="font-semibold">My Portfolio</h3>
-                <p className="text-sm text-gray-600">Manage your assets</p>
+                <Wallet className="w-14 h-14 text-accent mx-auto mb-4" />
+                <h3 className="font-semibold text-lg text-foreground">My Portfolio</h3>
+                <p className="text-sm text-foreground-muted">Manage your assets</p>
               </CardContent>
             </Card>
           </Link>
         </div>
 
         {/* Recent Assets from Marketplace */}
-        <Card>
+        <Card className="glass">
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Featured Assets</CardTitle>
@@ -266,14 +266,14 @@ export default function DashboardPage() {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {assets.map((asset: any) => (
                   <Link key={asset._id} href={`/marketplace/${asset._id}`}>
-                    <div className="border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer">
-                      <h4 className="font-semibold mb-2">{asset.title}</h4>
-                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">{asset.description}</p>
+                    <div className="bg-surface border border-border rounded-xl p-5 hover:bg-surface-hover transition-all cursor-pointer card-hover">
+                      <h4 className="font-semibold text-foreground mb-2">{asset.title}</h4>
+                      <p className="text-sm text-foreground-muted mb-3 line-clamp-2">{asset.description}</p>
                       <div className="flex justify-between items-center">
-                        <span className="text-lg font-bold text-blue-600">
+                        <span className="text-xl font-bold text-primary">
                           {formatCurrency(asset.listingPrice || asset.valuation)}
                         </span>
-                        <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                        <span className="text-xs bg-primary-muted text-primary px-3 py-1 rounded-full border border-primary-border">
                           {asset.category}
                         </span>
                       </div>
@@ -282,7 +282,7 @@ export default function DashboardPage() {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-gray-500 py-8">No assets available yet</p>
+              <p className="text-center text-foreground-muted py-8">No assets available yet</p>
             )}
           </CardContent>
         </Card>

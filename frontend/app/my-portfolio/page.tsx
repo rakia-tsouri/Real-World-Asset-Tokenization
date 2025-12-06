@@ -101,71 +101,77 @@ export default function MyPortfolio() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl">Loading portfolio...</div>
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto glow-primary"></div>
+          <p className="mt-6 text-foreground-muted text-lg">Loading your assets...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen gradient-bg py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">My Portfolio</h1>
-          <Button onClick={() => window.location.href = '/create-asset'}>
+          <div>
+            <h1 className="text-4xl font-bold gradient-text mb-2">My Assets</h1>
+            <p className="text-foreground-muted text-lg">Manage your Tunisian real estate portfolio</p>
+          </div>
+          <Button onClick={() => window.location.href = '/create-asset'} glow>
             Create New Asset
           </Button>
         </div>
 
         {/* Portfolio Analytics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <div className="text-sm text-gray-600 mb-1">Total Assets</div>
-              <div className="text-3xl font-bold">{stats.totalAssets}</div>
+              <div className="text-sm text-foreground-muted mb-2">Total Assets</div>
+              <div className="text-3xl font-bold text-foreground">{stats.totalAssets}</div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <div className="text-sm text-gray-600 mb-1">Total Value</div>
-              <div className="text-3xl font-bold text-green-600">
-                ${stats.totalValue.toLocaleString()}
+              <div className="text-sm text-foreground-muted mb-2">Total Value</div>
+              <div className="text-3xl font-bold text-success">
+                {stats.totalValue.toLocaleString()} TND
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <div className="text-sm text-gray-600 mb-1">Listed</div>
-              <div className="text-3xl font-bold text-blue-600">{stats.listedAssets}</div>
+              <div className="text-sm text-foreground-muted mb-2">Listed</div>
+              <div className="text-3xl font-bold text-accent">{stats.listedAssets}</div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <div className="text-sm text-gray-600 mb-1">Approved</div>
-              <div className="text-3xl font-bold text-green-600">{stats.approvedAssets}</div>
+              <div className="text-sm text-foreground-muted mb-2">Approved</div>
+              <div className="text-3xl font-bold text-success">{stats.approvedAssets}</div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <div className="text-sm text-gray-600 mb-1">Pending</div>
-              <div className="text-3xl font-bold text-yellow-600">{stats.pendingAssets}</div>
+              <div className="text-sm text-foreground-muted mb-2">Pending</div>
+              <div className="text-3xl font-bold text-warning">{stats.pendingAssets}</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Assets List */}
         {assets.length === 0 ? (
-          <Card>
+          <Card className="glass">
             <CardContent className="p-12 text-center">
-              <h2 className="text-xl font-semibold mb-2">No Assets Yet</h2>
-              <p className="text-gray-600 mb-6">
-                Start tokenizing your real-world assets to build your portfolio
+              <h2 className="text-2xl font-bold text-foreground mb-3">No Assets Yet</h2>
+              <p className="text-foreground-muted mb-6 text-lg">
+                Start tokenizing your real estate properties to build your portfolio
               </p>
-              <Button onClick={() => window.location.href = '/create-asset'}>
+              <Button onClick={() => window.location.href = '/create-asset'} glow>
                 Create Your First Asset
               </Button>
             </CardContent>
@@ -173,19 +179,19 @@ export default function MyPortfolio() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {assets.map((asset) => (
-              <Card key={asset._id}>
+              <Card key={asset._id} hover className="glass">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-semibold">{asset.title}</h3>
+                    <h3 className="text-lg font-semibold text-foreground">{asset.title}</h3>
                     <span
-                      className={`px-2 py-1 text-xs rounded-full ${
+                      className={`px-3 py-1 text-xs font-medium rounded-full border ${
                         asset.verificationStatus === 'approved'
-                          ? 'bg-green-100 text-green-800'
+                          ? 'bg-success-muted text-success border-success/30'
                           : asset.verificationStatus === 'pending'
-                          ? 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-warning-muted text-warning border-warning/30'
                           : asset.verificationStatus === 'rejected'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-gray-100 text-gray-800'
+                          ? 'bg-danger-muted text-danger border-danger/30'
+                          : 'bg-surface text-foreground-muted border-border'
                       }`}
                     >
                       {asset.verificationStatus}
@@ -193,29 +199,29 @@ export default function MyPortfolio() {
                   </div>
 
                   <div className="space-y-2 mb-4">
-                    <div className="text-sm text-gray-600">
-                      Category: <span className="font-medium">{asset.category}</span>
+                    <div className="text-sm text-foreground-muted">
+                      Category: <span className="font-medium text-foreground">{asset.category}</span>
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-foreground-muted">
                       Value:{' '}
-                      <span className="font-medium text-green-600">
-                        ${(asset.listingPrice || asset.estimatedPrice || 0).toLocaleString()}
+                      <span className="font-medium text-success text-lg">
+                        {(asset.listingPrice || asset.estimatedPrice || 0).toLocaleString()} TND
                       </span>
                     </div>
                     {asset.securityScore && (
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-foreground-muted">
                         Security Score:{' '}
-                        <span className="font-medium">{asset.securityScore}/100</span>
+                        <span className="font-medium text-foreground">{asset.securityScore}/100</span>
                       </div>
                     )}
                     {asset.isListed && (
-                      <div className="text-xs text-blue-600 font-medium">
+                      <div className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-accent-muted text-accent border border-accent/30 rounded-full font-medium">
                         🔵 Listed for Sale
                       </div>
                     )}
                     {asset.hedera.tokenized && (
-                      <div className="text-xs text-purple-600 font-medium">
-                        ⚡ Tokenized on Hedera
+                      <div className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-primary-muted text-primary border border-primary/30 rounded-full font-medium ml-2">
+                        ⚡ Tokenized
                       </div>
                     )}
                   </div>

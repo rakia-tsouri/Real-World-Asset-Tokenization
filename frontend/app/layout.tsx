@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RWA Tokenization Platform",
-  description: "Invest in tokenized real-world assets",
+  title: "Carthage Gate - Premium Asset Tokenization",
+  description: "Access premium tokenized real-world assets through Carthage Gate",
 };
 
 export default function RootLayout({

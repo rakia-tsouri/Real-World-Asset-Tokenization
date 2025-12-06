@@ -228,17 +228,17 @@ export default function CreateAsset() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen gradient-bg py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <Card>
+        <Card className="glass">
           <div className="p-8">
-            <h1 className="text-3xl font-bold mb-2">Create New Asset</h1>
-            <p className="text-gray-600 mb-8">
-              Tokenize your real-world asset. Upload proof of ownership for verification.
+            <h1 className="text-4xl font-bold gradient-text mb-2">Create New Asset</h1>
+            <p className="text-foreground-muted mb-8 text-lg">
+              Tokenize your Tunisian real estate property. Upload proof of ownership for verification.
             </p>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+              <div className="bg-danger-muted border border-danger/30 text-danger px-4 py-3 rounded-xl mb-6">
                 {error}
               </div>
             )}
@@ -246,49 +246,49 @@ export default function CreateAsset() {
             {!assetType ? (
               /* Asset Type Selection */
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold mb-4">Select Asset Type</h2>
+                <h2 className="text-2xl font-semibold mb-4 text-foreground">Select Asset Type</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     onClick={() => setAssetType('real-estate')}
-                    className="flex items-center gap-4 p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                    className="flex items-center gap-4 p-6 bg-surface border-2 border-border rounded-xl hover:border-primary hover:bg-primary/10 transition-all group"
                   >
-                    <Building2 className="w-12 h-12 text-blue-600" />
+                    <Building2 className="w-12 h-12 text-primary group-hover:scale-110 transition-transform" />
                     <div className="text-left">
-                      <h3 className="font-semibold text-lg text-gray-900">Real Estate</h3>
-                      <p className="text-sm text-gray-600">Houses, apartments, land, commercial properties</p>
+                      <h3 className="font-semibold text-lg text-foreground">Real Estate</h3>
+                      <p className="text-sm text-foreground-muted">Residential & commercial properties in Tunisia</p>
                     </div>
                   </button>
 
                   <button
                     onClick={() => setAssetType('vehicle')}
-                    className="flex items-center gap-4 p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                    className="flex items-center gap-4 p-6 bg-surface border-2 border-border rounded-xl hover:border-success hover:bg-success/10 transition-all group"
                   >
-                    <Car className="w-12 h-12 text-green-600" />
+                    <Car className="w-12 h-12 text-success group-hover:scale-110 transition-transform" />
                     <div className="text-left">
-                      <h3 className="font-semibold text-lg text-gray-900">Vehicle</h3>
-                      <p className="text-sm text-gray-600">Cars, motorcycles, boats, aircraft</p>
+                      <h3 className="font-semibold text-lg text-foreground">Vehicle</h3>
+                      <p className="text-sm text-foreground-muted">Cars, motorcycles, and other vehicles</p>
                     </div>
                   </button>
 
                   <button
                     onClick={() => setAssetType('commodity')}
-                    className="flex items-center gap-4 p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                    className="flex items-center gap-4 p-6 bg-surface border-2 border-border rounded-xl hover:border-gold hover:bg-gold/10 transition-all group"
                   >
-                    <Gem className="w-12 h-12 text-yellow-600" />
+                    <Gem className="w-12 h-12 text-gold group-hover:scale-110 transition-transform" />
                     <div className="text-left">
-                      <h3 className="font-semibold text-lg text-gray-900">Commodity</h3>
-                      <p className="text-sm text-gray-600">Gold, silver, precious metals, gems</p>
+                      <h3 className="font-semibold text-lg text-foreground">Commodity</h3>
+                      <p className="text-sm text-foreground-muted">Gold, silver, precious metals & gems</p>
                     </div>
                   </button>
 
                   <button
                     onClick={() => setAssetType('company')}
-                    className="flex items-center gap-4 p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                    className="flex items-center gap-4 p-6 bg-surface border-2 border-border rounded-xl hover:border-accent hover:bg-accent/10 transition-all group"
                   >
-                    <Building className="w-12 h-12 text-purple-600" />
+                    <Building className="w-12 h-12 text-accent group-hover:scale-110 transition-transform" />
                     <div className="text-left">
-                      <h3 className="font-semibold text-lg text-gray-900">Company</h3>
-                      <p className="text-sm text-gray-600">Business equity, shares, partnerships</p>
+                      <h3 className="font-semibold text-lg text-foreground">Company</h3>
+                      <p className="text-sm text-foreground-muted">Business equity & partnerships</p>
                     </div>
                   </button>
                 </div>
@@ -296,13 +296,13 @@ export default function CreateAsset() {
             ) : (
               /* Asset Form */
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="flex items-center justify-between mb-6 pb-4 border-b">
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-border">
                   <div className="flex items-center gap-3">
-                    {assetType === 'real-estate' && <Building2 className="w-6 h-6 text-blue-600" />}
-                    {assetType === 'vehicle' && <Car className="w-6 h-6 text-green-600" />}
-                    {assetType === 'commodity' && <Gem className="w-6 h-6 text-yellow-600" />}
-                    {assetType === 'company' && <Building className="w-6 h-6 text-purple-600" />}
-                    <h2 className="text-xl font-semibold capitalize text-gray-900">
+                    {assetType === 'real-estate' && <Building2 className="w-6 h-6 text-primary" />}
+                    {assetType === 'vehicle' && <Car className="w-6 h-6 text-success" />}
+                    {assetType === 'commodity' && <Gem className="w-6 h-6 text-gold" />}
+                    {assetType === 'company' && <Building className="w-6 h-6 text-accent" />}
+                    <h2 className="text-xl font-semibold capitalize text-foreground">
                       {assetType.replace('-', ' ')} Details
                     </h2>
                   </div>
@@ -320,12 +320,11 @@ export default function CreateAsset() {
                     value={formData.title}
                     onChange={handleChange}
                     required
-                    placeholder="e.g., Luxury Apartment in Downtown"
-                    className="text-gray-900"
+                    placeholder="e.g., Modern Apartment in Tunis"
                   />
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-foreground-muted mb-2">
                       Description
                     </label>
                     <textarea
@@ -334,7 +333,7 @@ export default function CreateAsset() {
                       onChange={handleChange}
                       required
                       rows={4}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-gray-900"
+                      className="w-full px-4 py-3 border border-border bg-surface text-foreground rounded-xl focus:ring-2 focus:ring-primary focus:border-primary"
                       placeholder="Detailed description of your asset..."
                     />
                   </div>
@@ -346,8 +345,7 @@ export default function CreateAsset() {
                     value={formData.location}
                     onChange={handleChange}
                     required
-                    placeholder="City, Country"
-                    className="text-gray-900"
+                    placeholder="City, Tunisia"
                   />
 
                   <div>

@@ -44,10 +44,10 @@ export default function PortfolioPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading portfolio...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto glow-primary"></div>
+          <p className="mt-6 text-foreground-muted text-lg">Loading portfolio...</p>
         </div>
       </div>
     );
@@ -56,36 +56,37 @@ export default function PortfolioPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen gradient-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">My Portfolio</h1>
+        <h1 className="text-4xl font-bold gradient-text mb-2">My Portfolio</h1>
+        <p className="text-foreground-muted text-lg mb-8">Track your real estate investments and returns</p>
 
         {/* Portfolio Summary */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <p className="text-sm text-gray-600 mb-1">Total Assets</p>
-              <p className="text-3xl font-bold">{portfolio?.stats?.totalAssets || 0}</p>
+              <p className="text-sm text-foreground-muted mb-2">Total Assets</p>
+              <p className="text-4xl font-bold text-foreground">{portfolio?.stats?.totalAssets || 0}</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <p className="text-sm text-gray-600 mb-1">Portfolio Value</p>
-              <p className="text-3xl font-bold">{formatCurrency(portfolio?.stats?.totalValue || 0)}</p>
+              <p className="text-sm text-foreground-muted mb-2">Portfolio Value</p>
+              <p className="text-4xl font-bold text-success">{formatCurrency(portfolio?.stats?.totalValue || 0)}</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <CardContent className="p-6">
-              <p className="text-sm text-gray-600 mb-1">Listed Assets</p>
-              <p className="text-3xl font-bold">{portfolio?.stats?.listedAssets || 0}</p>
+              <p className="text-sm text-foreground-muted mb-2">Listed Assets</p>
+              <p className="text-4xl font-bold text-accent">{portfolio?.stats?.listedAssets || 0}</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Holdings */}
-        <Card className="mb-8">
+        <Card className="mb-8 glass">
           <CardHeader>
             <CardTitle>Holdings</CardTitle>
           </CardHeader>
@@ -100,30 +101,30 @@ export default function PortfolioPage() {
                   return (
                     <div
                       key={holding.assetId}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-5 bg-surface rounded-xl border border-border hover:bg-surface-hover transition-all"
                     >
                       <div className="flex-1">
-                        <h3 className="font-semibold text-lg">{holding.assetName}</h3>
-                        <p className="text-sm text-gray-600">{holding.assetSymbol}</p>
+                        <h3 className="font-semibold text-lg text-foreground">{holding.assetName}</h3>
+                        <p className="text-sm text-foreground-muted">{holding.assetSymbol}</p>
                       </div>
                       <div className="flex-1 text-center">
-                        <p className="text-sm text-gray-600">Quantity</p>
-                        <p className="font-medium">{formatNumber(holding.quantity)}</p>
+                        <p className="text-sm text-foreground-muted">Quantity</p>
+                        <p className="font-medium text-foreground">{formatNumber(holding.quantity)}</p>
                       </div>
                       <div className="flex-1 text-center">
-                        <p className="text-sm text-gray-600">Avg Price</p>
-                        <p className="font-medium">{formatCurrency(holding.averagePrice)}</p>
+                        <p className="text-sm text-foreground-muted">Avg Price</p>
+                        <p className="font-medium text-foreground">{formatCurrency(holding.averagePrice)}</p>
                       </div>
                       <div className="flex-1 text-center">
-                        <p className="text-sm text-gray-600">Current Value</p>
-                        <p className="font-medium">{formatCurrency(totalValue)}</p>
+                        <p className="text-sm text-foreground-muted">Current Value</p>
+                        <p className="font-medium text-foreground">{formatCurrency(totalValue)}</p>
                       </div>
                       <div className="flex-1 text-right">
-                        <p className="text-sm text-gray-600">P&L</p>
-                        <p className={`font-semibold ${pl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className="text-sm text-foreground-muted">P&L</p>
+                        <p className={`font-semibold ${pl >= 0 ? 'text-success' : 'text-danger'}`}>
                           {formatCurrency(pl)}
                         </p>
-                        <p className={`text-sm ${pl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <p className={`text-sm ${pl >= 0 ? 'text-success' : 'text-danger'}`}>
                           {plPercentage.toFixed(2)}%
                         </p>
                       </div>
@@ -133,9 +134,9 @@ export default function PortfolioPage() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-600">No assets in your portfolio</p>
-                <a href="/marketplace" className="text-blue-600 hover:text-blue-700 mt-2 inline-block">
+                <Package className="w-16 h-16 text-foreground-subtle mx-auto mb-4 opacity-30" />
+                <p className="text-foreground-muted mb-4">No assets in your portfolio</p>
+                <a href="/marketplace" className="text-primary hover:text-primary-hover mt-2 inline-block font-medium">
                   Browse Marketplace
                 </a>
               </div>
@@ -144,7 +145,7 @@ export default function PortfolioPage() {
         </Card>
 
         {/* Transaction History */}
-        <Card>
+        <Card className="glass">
           <CardHeader>
             <CardTitle>Transaction History</CardTitle>
           </CardHeader>
@@ -154,32 +155,32 @@ export default function PortfolioPage() {
                 {transactions.map((tx: any) => (
                   <div
                     key={tx.id}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                    className="flex items-center justify-between p-5 bg-surface rounded-xl border border-border hover:bg-surface-hover transition-all"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className={`p-2 rounded-full ${
-                        tx.type === 'buy' ? 'bg-green-100' : 'bg-red-100'
+                      <div className={`p-2 rounded-xl ${
+                        tx.type === 'buy' ? 'bg-success-muted border border-success/30' : 'bg-danger-muted border border-danger/30'
                       }`}>
                         {tx.type === 'buy' ? (
-                          <ArrowDownRight className="w-5 h-5 text-green-600" />
+                          <ArrowDownRight className="w-5 h-5 text-success" />
                         ) : (
-                          <ArrowUpRight className="w-5 h-5 text-red-600" />
+                          <ArrowUpRight className="w-5 h-5 text-danger" />
                         )}
                       </div>
                       <div>
-                        <p className="font-medium">
+                        <p className="font-medium text-foreground">
                           {tx.type === 'buy' ? 'Bought' : 'Sold'} {tx.assetSymbol}
                         </p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-foreground-muted">
                           {new Date(tx.timestamp).toLocaleString()}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">
+                      <p className="font-semibold text-foreground">
                         {formatNumber(tx.quantity)} tokens
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-foreground-muted">
                         {formatCurrency(tx.totalAmount)}
                       </p>
                     </div>
@@ -188,7 +189,7 @@ export default function PortfolioPage() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-gray-600">No transactions yet</p>
+                <p className="text-foreground-muted">No transactions yet</p>
               </div>
             )}
           </CardContent>

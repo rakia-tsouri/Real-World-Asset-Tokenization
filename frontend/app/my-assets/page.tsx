@@ -79,21 +79,21 @@ export default function MyAssetsPage() {
     switch (status) {
       case 'approved':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-success-muted text-success rounded-full text-sm font-medium border border-success/30">
             <CheckCircle className="w-4 h-4" />
             Approved
           </span>
         );
       case 'pending':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-warning-muted text-warning rounded-full text-sm font-medium border border-warning/30">
             <Clock className="w-4 h-4" />
             Pending Review
           </span>
         );
       case 'rejected':
         return (
-          <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-3 py-1 bg-danger-muted text-danger rounded-full text-sm font-medium border border-danger/30">
             <XCircle className="w-4 h-4" />
             Rejected
           </span>
@@ -132,10 +132,10 @@ export default function MyAssetsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your assets...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto glow-primary"></div>
+          <p className="mt-6 text-foreground-muted text-lg">Loading your assets...</p>
         </div>
       </div>
     );
@@ -144,67 +144,67 @@ export default function MyAssetsPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen gradient-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Assets</h1>
-          <p className="text-gray-600 mt-2">Manage and track your tokenized real-world assets</p>
+          <h1 className="text-4xl font-bold gradient-text">My Assets</h1>
+          <p className="text-foreground-muted mt-2 text-lg">Manage and track your tokenized real-world assets</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card hover className="glass">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Total Assets</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">{stats.total}</p>
+                  <p className="text-sm text-foreground-muted mb-1">Total Assets</p>
+                  <p className="text-4xl font-bold text-foreground mt-1">{stats.total}</p>
                 </div>
-                <div className="bg-blue-100 p-3 rounded-lg">
-                  <Building2 className="w-6 h-6 text-blue-600" />
+                <div className="bg-primary-muted p-3 rounded-xl border border-primary-border">
+                  <Building2 className="w-7 h-7 text-primary" />
                 </div>
               </div>
             </div>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Pending Review</p>
-                  <p className="text-3xl font-bold text-yellow-600 mt-1">{stats.pending}</p>
+                  <p className="text-sm text-foreground-muted mb-1">Pending Review</p>
+                  <p className="text-4xl font-bold text-warning mt-1">{stats.pending}</p>
                 </div>
-                <div className="bg-yellow-100 p-3 rounded-lg">
-                  <Clock className="w-6 h-6 text-yellow-600" />
+                <div className="bg-warning-muted p-3 rounded-xl border border-warning/30">
+                  <Clock className="w-7 h-7 text-warning" />
                 </div>
               </div>
             </div>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Approved</p>
-                  <p className="text-3xl font-bold text-green-600 mt-1">{stats.approved}</p>
+                  <p className="text-sm text-foreground-muted mb-1">Approved</p>
+                  <p className="text-4xl font-bold text-success mt-1">{stats.approved}</p>
                 </div>
-                <div className="bg-green-100 p-3 rounded-lg">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
+                <div className="bg-success-muted p-3 rounded-xl border border-success/30">
+                  <CheckCircle className="w-7 h-7 text-success" />
                 </div>
               </div>
             </div>
           </Card>
 
-          <Card>
+          <Card hover className="glass">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600">Tokenized</p>
-                  <p className="text-3xl font-bold text-purple-600 mt-1">{stats.tokenized}</p>
+                  <p className="text-sm text-foreground-muted mb-1">Tokenized</p>
+                  <p className="text-4xl font-bold text-accent mt-1">{stats.tokenized}</p>
                 </div>
-                <div className="bg-purple-100 p-3 rounded-lg">
-                  <TrendingUp className="w-6 h-6 text-purple-600" />
+                <div className="bg-accent-muted p-3 rounded-xl border border-accent/30">
+                  <TrendingUp className="w-7 h-7 text-accent" />
                 </div>
               </div>
             </div>
@@ -213,16 +213,16 @@ export default function MyAssetsPage() {
 
         {/* Filters */}
         <div className="mb-6 flex items-center gap-4">
-          <span className="text-sm font-medium text-gray-700">Filter:</span>
-          <div className="flex gap-2">
+          <span className="text-sm font-medium text-foreground">Filter:</span>
+          <div className="flex gap-2 flex-wrap">
             {['all', 'pending', 'approved', 'rejected'].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilter(status as any)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   filter === status
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                    ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                    : 'bg-surface-elevated text-foreground-muted border border-border hover:bg-surface-hover hover:text-foreground'
                 }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
