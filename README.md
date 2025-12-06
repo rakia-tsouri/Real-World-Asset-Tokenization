@@ -73,7 +73,7 @@ The Carthage Gate platform consists of the following components:
 - **Payment Processing**: Integration with Tunisian payment gateways
 - **Security**: OpenZeppelin Contracts
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js >= 16.x
 - npm or yarn
@@ -81,7 +81,7 @@ The Carthage Gate platform consists of the following components:
 - Infura/Alchemy API key (for deployment)
 - Understanding of Tunisian real estate regulations
 
-## 🔧 Installation
+## Installation
 
 ```bash
 # Clone the repository
@@ -101,7 +101,7 @@ cp .env.example .env
 # - TND payment gateway credentials
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 Create a `.env` file in the root directory:
 
@@ -115,7 +115,7 @@ IPFS_PROJECT_ID=your_ipfs_id
 IPFS_PROJECT_SECRET=your_ipfs_secret
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all tests
@@ -131,7 +131,7 @@ npx hardhat test test/PropertyToken.test.js
 npx hardhat test test/TndPayment.test.js
 ```
 
-## 📦 Deployment
+## Deployment
 
 ```bash
 # Compile contracts
@@ -150,7 +150,7 @@ npx hardhat run scripts/deploy.js --network polygon
 npx hardhat verify --network polygon DEPLOYED_CONTRACT_ADDRESS
 ```
 
-## 💼 Usage Examples
+## Usage Examples
 
 ### Tokenizing a Property
 
@@ -195,7 +195,7 @@ await propertyToken.distributeRentalIncome({
 await propertyToken.claimRentalIncome();
 ```
 
-## 🏛️ Smart Contract Overview
+## Smart Contract Overview
 
 ### PropertyToken.sol
 ERC-20 token contract representing fractional ownership of a specific property with TND-denominated pricing.
@@ -223,7 +223,7 @@ Carthage Gate operates in accordance with Tunisian law:
 - Adherence to Central Bank of Tunisia guidelines
 - Tax reporting and withholding as per Tunisian tax law
 
-## 🔐 Security
+## Security
 
 - All contracts audited by certified blockchain security firms
 - Multi-signature wallet for treasury management
@@ -232,13 +232,13 @@ Carthage Gate operates in accordance with Tunisian law:
 - Insurance fund for investor protection
 - Regular security audits and penetration testing
 
-## 📊 Supported Property Types
+## Supported Property Types
 
-- 🏢 **Commercial Properties**: Offices, retail spaces, warehouses
-- 🏠 **Residential Properties**: Apartments, villas, townhouses
-- 🏨 **Hospitality**: Hotels, resorts, vacation rentals
-- 🏗️ **Development Projects**: New construction opportunities
-- 🌾 **Agricultural Land**: Farms, olive groves, vineyards
+-  **Commercial Properties**: Offices, retail spaces, warehouses
+-  **Residential Properties**: Apartments, villas, townhouses
+-  **Hospitality**: Hotels, resorts, vacation rentals
+-  **Development Projects**: New construction opportunities
+-  **Agricultural Land**: Farms, olive groves, vineyards
 
 ---
 
