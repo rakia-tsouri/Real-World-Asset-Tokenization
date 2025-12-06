@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { assetAPI } from '@/lib/api';
+import { assetAPI, auditAPI } from '@/lib/api';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { AuditReport } from '@/components/ui/AuditReport';
 import { 
   Building2, 
   Car, 
@@ -17,7 +18,8 @@ import {
   TrendingUp,
   Eye,
   Edit,
-  ExternalLink
+  ExternalLink,
+  Shield
 } from 'lucide-react';
 
 interface Asset {
@@ -50,6 +52,10 @@ export default function MyAssetsPage() {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+  const [auditData, setAuditData] = useState<any>(null);
+  const [auditing, setAuditing] = useState(false);
+  const [showAuditReport, setShowAuditReport] = useState(false);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -72,6 +78,24 @@ export default function MyAssetsPage() {
       console.error('Failed to fetch assets:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAudit = async (tokenId: string) => {
+    setAuditing(true);
+    setMessage(null);
+    try {
+      const response = await auditAPI.auditToken(tokenId);
+      setAuditData(response.data);
+      setShowAuditReport(true);
+    } catch (error: any) {
+      setMessage({
+        type: 'error',
+        text: error.response?.data?.message || 'Failed to audit token. Make sure the audit service is running on port 5002.'
+      });
+      setTimeout(() => setMessage(null), 5000);
+    } finally {
+      setAuditing(false);
     }
   };
 
@@ -151,6 +175,13 @@ export default function MyAssetsPage() {
           <h1 className="text-4xl font-bold gradient-text">My Assets</h1>
           <p className="text-foreground-muted mt-2 text-lg">Manage and track your tokenized real-world assets</p>
         </div>
+
+        {/* Message */}
+        {message && (
+          <div className={`mb-6 p-4 rounded-lg ${message.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200' : 'bg-green-50 text-green-800 border border-green-200'}`}>
+            {message.text}
+          </div>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -339,6 +370,19 @@ export default function MyAssetsPage() {
                         View
                       </Button>
                       
+                      {asset.hedera?.tokenized && asset.hedera?.tokenId && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleAudit(asset.hedera.tokenId!)}
+                          disabled={auditing}
+                          className="border-purple-600 text-purple-600 hover:bg-purple-50"
+                        >
+                          <Shield className={`w-4 h-4 mr-1 ${auditing ? 'animate-pulse' : ''}`} />
+                          {auditing ? 'Auditing...' : 'Audit'}
+                        </Button>
+                      )}
+                      
                       {asset.verificationStatus === 'rejected' && (
                         <Button
                           variant="outline"
@@ -376,6 +420,14 @@ export default function MyAssetsPage() {
               )}
             </div>
           </Card>
+        )}
+
+        {/* Audit Report Modal */}
+        {showAuditReport && (
+          <AuditReport
+            data={auditData}
+            onClose={() => setShowAuditReport(false)}
+          />
         )}
       </div>
     </div>

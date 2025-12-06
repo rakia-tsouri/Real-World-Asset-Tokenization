@@ -3,13 +3,14 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { assetAPI, transactionAPI } from '@/lib/api';
+import { assetAPI, transactionAPI, auditAPI } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { PriceChart } from '@/components/charts/PriceChart';
+import { AuditReport } from '@/components/ui/AuditReport';
 import { formatCurrency, formatNumber } from '@/lib/utils';
-import { ArrowLeft, TrendingUp, TrendingDown, Wallet, RefreshCw, ExternalLink } from 'lucide-react';
+import { ArrowLeft, TrendingUp, TrendingDown, Wallet, RefreshCw, ExternalLink, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AssetDetailPage() {
@@ -28,6 +29,9 @@ export default function AssetDetailPage() {
   const [userTokenBalance, setUserTokenBalance] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [tradeMode, setTradeMode] = useState<'buy' | 'sell'>('buy');
+  const [auditData, setAuditData] = useState<any>(null);
+  const [auditing, setAuditing] = useState(false);
+  const [showAuditReport, setShowAuditReport] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -67,6 +71,31 @@ export default function AssetDetailPage() {
     setRefreshing(true);
     await Promise.all([fetchAsset(), fetchUserBalance()]);
     setRefreshing(false);
+  };
+
+  const handleAudit = async () => {
+    if (!asset?.hedera?.tokenId) {
+      setMessage({
+        type: 'error',
+        text: 'No token ID available for audit'
+      });
+      return;
+    }
+
+    setAuditing(true);
+    setMessage(null);
+    try {
+      const response = await auditAPI.auditToken(asset.hedera.tokenId);
+      setAuditData(response.data);
+      setShowAuditReport(true);
+    } catch (error: any) {
+      setMessage({
+        type: 'error',
+        text: error.response?.data?.message || 'Failed to audit token. Make sure the audit service is running on port 5002.'
+      });
+    } finally {
+      setAuditing(false);
+    }
   };
 
   const handleTrade = async () => {
@@ -200,15 +229,28 @@ export default function AssetDetailPage() {
             Back to Marketplace
           </Link>
 
-          <Button
-            onClick={refreshData}
-            disabled={refreshing}
-            variant="outline"
-            className="inline-flex items-center"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+          <div className="flex items-center gap-3">
+            {asset?.hedera?.tokenId && (
+              <Button
+                onClick={handleAudit}
+                disabled={auditing}
+                variant="outline"
+                className="inline-flex items-center border-purple-600 text-purple-600 hover:bg-purple-50"
+              >
+                <Shield className={`w-4 h-4 mr-2 ${auditing ? 'animate-pulse' : ''}`} />
+                {auditing ? 'Auditing...' : 'Security Audit'}
+              </Button>
+            )}
+            <Button
+              onClick={refreshData}
+              disabled={refreshing}
+              variant="outline"
+              className="inline-flex items-center"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -522,6 +564,14 @@ export default function AssetDetailPage() {
             </Card>
           </div>
         </div>
+
+        {/* Audit Report Modal */}
+        {showAuditReport && (
+          <AuditReport
+            data={auditData}
+            onClose={() => setShowAuditReport(false)}
+          />
+        )}
       </div>
     </div>
   );
