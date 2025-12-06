@@ -1,0 +1,56 @@
+# api_ml_optimizer.py
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import List
+import pandas as pd
+
+from scripts.load_data import load_data
+from Models.ml_optimizer import MLOptimizer
+
+app = FastAPI()
+
+# ---- Request schema ----
+class PortfolioRequest(BaseModel):
+    symbols: List[str]
+    amount_to_invest: float
+    risk_tolerance: float
+    liquidity_weight: float = 0.2
+
+
+@app.post("/optimize")
+def optimize_portfolio(req: PortfolioRequest):
+    # Charger les données
+    data, prices_matrix, tx_df = load_data()
+
+    # Vérifier que les symbols existent dans data
+    allowed_symbols = [s for s in req.symbols if s in data["symbol"].values]
+    if not allowed_symbols:
+        return {"error": "None of the requested symbols exist in the data."}
+
+    # ML optimizer
+    optimizer = MLOptimizer(
+        data=data,
+        prices_matrix=prices_matrix,
+        tx_df=tx_df,
+        min_allocation=0.05
+    )
+    optimizer.train_models()
+
+    # Optimiser le portefeuille
+    allocation = optimizer.optimize_portfolio(
+        amount_invest=req.amount_to_invest,
+        risk_tolerance=req.risk_tolerance,
+        allowed_symbols=allowed_symbols,
+        liquidity_weight=req.liquidity_weight
+    )
+
+    # Préparer le retour : allocation % et $ propre pour JSON
+    allocation_percent = {k: float(v) for k, v in allocation.items()}
+    allocation_amount = {k: float(v * req.amount_to_invest / 100) for k, v in allocation_percent.items()}
+
+    return {
+        "requested_symbols": req.symbols,
+        "allowed_symbols": allowed_symbols,
+        "allocation_percent": allocation_percent,
+        "allocation_amount": allocation_amount
+    }
