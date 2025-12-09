@@ -64,17 +64,17 @@ export default function KYCVerification() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen gradient-bg py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <Card>
           <div className="p-8">
-            <h1 className="text-3xl font-bold mb-2">Identity Verification (KYC)</h1>
-            <p className="text-gray-600 mb-6">
+            <h1 className="text-3xl font-bold mb-2 gradient-text">Identity Verification (KYC)</h1>
+            <p className="text-foreground-muted mb-6">
               Complete your identity verification to start trading assets. This process may take up to 24 hours.
             </p>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+              <div className="bg-danger-muted border border-danger/30 text-danger px-4 py-3 rounded mb-6">
                 {error}
               </div>
             )}
@@ -130,7 +130,7 @@ export default function KYCVerification() {
               />
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Address
                 </label>
                 <input
@@ -138,20 +138,20 @@ export default function KYCVerification() {
                   value={formData.address}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 bg-input border border-input-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-foreground"
                   placeholder="Your full address"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Document Type
                 </label>
                 <select
                   name="documentType"
                   value={formData.documentType}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 bg-input border border-input-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-foreground"
                   required
                 >
                   <option value="cin">National ID Card (CIN)</option>
@@ -160,7 +160,7 @@ export default function KYCVerification() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Upload Document
                 </label>
                 <input
@@ -168,16 +168,16 @@ export default function KYCVerification() {
                   accept="image/*,.pdf"
                   onChange={handleFileChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 bg-input border border-input-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-foreground"
                 />
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-foreground-muted mt-1">
                   Upload a clear photo of your {formData.documentType === 'cin' ? 'CIN' : 'passport'}
                 </p>
               </div>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <h3 className="font-semibold text-yellow-800 mb-2">Important:</h3>
-                <ul className="text-sm text-yellow-700 space-y-1 list-disc list-inside">
+              <div className="bg-warning-muted border border-warning/30 rounded-lg p-4">
+                <h3 className="font-semibold text-warning mb-2">Important:</h3>
+                <ul className="text-sm text-warning space-y-1 list-disc list-inside">
                   <li>Ensure the document is clear and readable</li>
                   <li>All information must match your document exactly</li>
                   <li>AI verification will be performed on your document</li>

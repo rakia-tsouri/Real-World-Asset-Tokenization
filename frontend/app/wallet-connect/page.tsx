@@ -27,8 +27,8 @@ export default function WalletConnectPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary glow-primary mx-auto"></div>
+          <p className="mt-6 text-lg text-foreground-muted">Loading...</p>
         </div>
       </div>
     );
@@ -37,43 +37,43 @@ export default function WalletConnectPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen gradient-bg py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <Wallet className="w-16 h-16 text-blue-600 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900">Connect Your Wallet</h1>
-          <p className="text-gray-600 mt-2">
+          <Wallet className="w-16 h-16 text-primary mx-auto mb-4" />
+          <h1 className="text-3xl font-bold gradient-text">Connect Your Wallet</h1>
+          <p className="text-foreground-muted mt-2">
             Connect your HashPack wallet to start trading assets
           </p>
         </div>
 
         {user.hashpackWalletConnected ? (
           <>
-            <Card className="bg-green-50 border-green-200">
+            <Card className="bg-success-muted border-success/30">
               <CardContent className="p-6 text-center">
-                <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-green-800 mb-2">Wallet Connected!</h2>
-                <p className="text-green-700 mb-2">
+                <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-success mb-2">Wallet Connected!</h2>
+                <p className="text-success mb-2">
                   Your HashPack wallet is connected and ready to use.
                 </p>
                 {user.accountId && (
-                  <p className="text-sm text-gray-600 mb-4">
+                  <p className="text-sm text-foreground-muted mb-4">
                     Account: {user.accountId}
                   </p>
                 )}
                 {user.isVerified ? (
                   <>
-                    <p className="text-green-700 mb-4">
+                    <p className="text-success mb-4">
                       Your account is fully verified. You can now buy and sell assets.
                     </p>
                     <Link href="/marketplace">
-                      <Button className="bg-green-600 hover:bg-green-700">
+                      <Button className="bg-success hover:bg-success-hover">
                         Go to Marketplace
                       </Button>
                     </Link>
                   </>
                 ) : (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded p-4 mt-4">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded p-4 mt-6 text-lg">
                     <p className="text-sm text-yellow-800">
                       {user.kycStatus !== 'approved' 
                         ? 'Complete KYC verification to start trading'
@@ -87,11 +87,11 @@ export default function WalletConnectPage() {
         ) : (
           <>
             {user.kycStatus !== 'approved' && (
-              <div className="mb-6 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded">
+              <div className="mb-6 bg-warning-muted border border-warning/30 text-warning px-4 py-3 rounded">
                 <p className="font-semibold">⚠️ KYC Required</p>
                 <p className="text-sm mt-1">
                   You need to complete KYC verification before connecting your wallet.
-                  <Link href="/kyc" className="text-blue-600 hover:underline ml-1">
+                  <Link href="/kyc" className="text-primary hover:underline ml-1">
                     Submit KYC Documents →
                   </Link>
                 </p>
@@ -103,7 +103,7 @@ export default function WalletConnectPage() {
         )}
 
         <div className="mt-8 text-center">
-          <Link href="/dashboard" className="text-blue-600 hover:text-blue-700">
+          <Link href="/dashboard" className="text-primary hover:text-primary-hover">
             ← Back to Dashboard
           </Link>
         </div>

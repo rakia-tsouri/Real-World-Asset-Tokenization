@@ -25,11 +25,15 @@ router.post('/register', async (req, res) => {
       });
     }
 
+    const generateAccountId = () =>
+      Math.floor(1e15 + Math.random() * 9e15).toString();
+
     const newUser = await User.create({
       name,
       email,
       password,
       country,
+      accountId: generateAccountId(),
       kycStatus: 'not_submitted',
       role: 'user'
     });
@@ -50,6 +54,7 @@ router.post('/register', async (req, res) => {
           name: newUser.name,
           email: newUser.email,
           country: newUser.country,
+          accountId: newUser.accountId,
           kycStatus: newUser.kycStatus,
           role: newUser.role,
           isVerified: newUser.isVerified
@@ -57,6 +62,7 @@ router.post('/register', async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(500).json({
       success: false,
       message: 'Registration failed',
@@ -64,6 +70,7 @@ router.post('/register', async (req, res) => {
     });
   }
 });
+
 
 router.post('/login', async (req, res) => {
   try {

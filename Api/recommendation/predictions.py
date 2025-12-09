@@ -14,7 +14,7 @@ optimizer.train_models()
 
 
 class SymbolsRequest(BaseModel):
-    symbols: list[str] = None  # optional, if empty, return all
+    symbols: list[str] = None
 
 
 @app.get("/predictions")

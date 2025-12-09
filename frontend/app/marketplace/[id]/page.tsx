@@ -181,7 +181,7 @@ export default function AssetDetailPage() {
               href="https://www.hashpack.app/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:text-blue-700 underline block"
+              className="text-sm text-primary hover:text-primary-hover underline block"
             >
               Open HashPack Wallet →
             </a>
@@ -200,10 +200,10 @@ export default function AssetDetailPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading asset...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto glow-primary"></div>
+          <p className="mt-6 text-foreground-muted text-lg">Loading asset...</p>
         </div>
       </div>
     );
@@ -218,12 +218,12 @@ export default function AssetDetailPage() {
   const priceChange24h = 0; // TODO: Calculate from price history
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen gradient-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <Link
             href="/marketplace"
-            className="inline-flex items-center text-blue-600 hover:text-blue-700"
+            className="inline-flex items-center text-primary hover:text-primary-hover"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Marketplace
@@ -262,8 +262,8 @@ export default function AssetDetailPage() {
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <div className="flex items-center gap-3 mb-2">
-                      <h1 className="text-3xl font-bold">{asset.name}</h1>
-                      <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                      <h1 className="text-3xl font-bold text-foreground">{asset.name}</h1>
+                      <span className="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-sm">
                         {asset.tokenization?.symbol || asset.symbol}
                       </span>
                     </div>
@@ -272,29 +272,29 @@ export default function AssetDetailPage() {
                         href={`https://hashscan.io/testnet/token/${asset.hedera.tokenId}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-gray-600 hover:text-blue-600 inline-flex items-center gap-1"
+                        className="text-sm text-foreground-muted hover:text-primary inline-flex items-center gap-1"
                       >
                         {asset.hedera.tokenId}
                         <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
                   </div>
-                  <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">
+                  <span className="px-3 py-1 bg-accent/10 text-accent border border-accent/20 rounded-full text-sm">
                     {asset.assetType}
                   </span>
                 </div>
 
                 {/* Price Information */}
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 mb-4">
+                <div className="bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10 rounded-lg p-4 mb-4">
                   <div className="flex items-end gap-4">
                     <div>
-                      <p className="text-sm text-gray-600 mb-1">Current Price</p>
-                      <p className="text-4xl font-bold">{formatCurrency(pricePerToken)}</p>
+                      <p className="text-sm text-foreground-muted mb-1">Current Price</p>
+                      <p className="text-4xl font-bold text-foreground">{formatCurrency(pricePerToken)}</p>
                     </div>
-                    <div className={`flex items-center gap-1 mb-2 ${priceChange24h >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    <div className={`flex items-center gap-1 mb-2 ${priceChange24h >= 0 ? 'text-success' : 'text-danger'}`}>
                       {priceChange24h >= 0 ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
                       <span className="font-semibold">{priceChange24h >= 0 ? '+' : ''}{priceChange24h.toFixed(2)}%</span>
-                      <span className="text-xs text-gray-500">24h</span>
+                      <span className="text-xs text-foreground-muted">24h</span>
                     </div>
                   </div>
                 </div>
@@ -302,20 +302,20 @@ export default function AssetDetailPage() {
                 {/* Key Stats */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <p className="text-sm text-gray-600">Total Supply</p>
-                    <p className="text-lg font-bold">{formatNumber(totalSupply)}</p>
+                    <p className="text-sm text-foreground-muted">Total Supply</p>
+                    <p className="text-lg font-bold text-foreground">{formatNumber(totalSupply)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Available</p>
-                    <p className="text-lg font-bold text-green-600">{formatNumber(availableTokens)}</p>
+                    <p className="text-sm text-foreground-muted">Available</p>
+                    <p className="text-lg font-bold text-success">{formatNumber(availableTokens)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Your Balance</p>
-                    <p className="text-lg font-bold text-blue-600">{formatNumber(userTokenBalance)}</p>
+                    <p className="text-sm text-foreground-muted">Your Balance</p>
+                    <p className="text-lg font-bold text-primary">{formatNumber(userTokenBalance)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">Market Cap</p>
-                    <p className="text-lg font-bold">{formatCurrency(totalSupply * pricePerToken)}</p>
+                    <p className="text-sm text-foreground-muted">Market Cap</p>
+                    <p className="text-lg font-bold text-foreground">{formatCurrency(totalSupply * pricePerToken)}</p>
                   </div>
                 </div>
               </CardContent>
@@ -330,30 +330,30 @@ export default function AssetDetailPage() {
                 <CardTitle>About {asset.name}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 mb-4">{asset.description}</p>
+                <p className="text-foreground-muted mb-4">{asset.description}</p>
                 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   {asset.location && (
                     <div>
-                      <span className="text-gray-600">Location:</span>
+                      <span className="text-foreground-muted">Location:</span>
                       <span className="ml-2 font-medium">{asset.location}</span>
                     </div>
                   )}
                   <div>
-                    <span className="text-gray-600">Verified:</span>
-                    <span className={`ml-2 font-medium ${asset.verified ? 'text-green-600' : 'text-gray-500'}`}>
+                    <span className="text-foreground-muted">Verified:</span>
+                    <span className={`ml-2 font-medium ${asset.verified ? 'text-success' : 'text-foreground-muted'}`}>
                       {asset.verified ? '✓ Yes' : '✗ No'}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Created:</span>
+                    <span className="text-foreground-muted">Created:</span>
                     <span className="ml-2 font-medium">
                       {new Date(asset.createdAt).toLocaleDateString()}
                     </span>
                   </div>
                   <div>
-                    <span className="text-gray-600">Status:</span>
-                    <span className="ml-2 font-medium capitalize">{asset.verificationStatus}</span>
+                    <span className="text-foreground-muted">Status:</span>
+                    <span className="ml-2 font-medium capitalize text-foreground">{asset.verificationStatus}</span>
                   </div>
                 </div>
               </CardContent>
@@ -366,12 +366,12 @@ export default function AssetDetailPage() {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                    <Wallet className="w-5 h-5 text-blue-600" />
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Wallet className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm text-gray-600">Wallet Status</p>
-                    <p className="font-semibold text-sm">
+                    <p className="text-sm text-foreground-muted">Wallet Status</p>
+                    <p className="font-semibold text-sm text-foreground">
                       {user.isVerified ? 'Connected' : 'Not Connected'}
                     </p>
                   </div>
@@ -380,7 +380,7 @@ export default function AssetDetailPage() {
                       href={`https://hashscan.io/testnet/account/${user.accountId}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-700"
+                      className="text-primary hover:text-primary-hover"
                     >
                       <ExternalLink className="w-4 h-4" />
                     </a>
@@ -399,8 +399,8 @@ export default function AssetDetailPage() {
                   <div
                     className={`p-3 rounded ${
                       message.type === 'success'
-                        ? 'bg-green-50 text-green-700 border border-green-200'
-                        : 'bg-red-50 text-red-700 border border-red-200'
+                        ? 'bg-success-muted text-success border border-success/30'
+                        : 'bg-danger-muted text-danger border border-danger/30'
                     }`}
                   >
                     {message.text}
@@ -413,8 +413,8 @@ export default function AssetDetailPage() {
                     onClick={() => setTradeMode('buy')}
                     className={`py-2 px-4 rounded-lg font-medium transition-colors ${
                       tradeMode === 'buy'
-                        ? 'bg-green-600 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        ? 'bg-success text-white'
+                        : 'bg-card-muted text-foreground-muted hover:bg-card-hover'
                     }`}
                   >
                     Buy
@@ -423,8 +423,8 @@ export default function AssetDetailPage() {
                     onClick={() => setTradeMode('sell')}
                     className={`py-2 px-4 rounded-lg font-medium transition-colors ${
                       tradeMode === 'sell'
-                        ? 'bg-red-600 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        ? 'bg-danger text-white'
+                        : 'bg-card-muted text-foreground-muted hover:bg-card-hover'
                     }`}
                   >
                     Sell
@@ -433,7 +433,7 @@ export default function AssetDetailPage() {
 
                 {/* Order Type Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground-muted mb-2">
                     Order Type
                   </label>
                   <div className="grid grid-cols-2 gap-2">
@@ -441,8 +441,8 @@ export default function AssetDetailPage() {
                       onClick={() => setOrderType('market')}
                       className={`py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
                         orderType === 'market'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          ? 'bg-primary text-white'
+                          : 'bg-card-muted text-foreground-muted hover:bg-card-hover'
                       }`}
                     >
                       Market
@@ -451,8 +451,8 @@ export default function AssetDetailPage() {
                       onClick={() => setOrderType('limit')}
                       className={`py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
                         orderType === 'limit'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          ? 'bg-primary text-white'
+                          : 'bg-card-muted text-foreground-muted hover:bg-card-hover'
                       }`}
                     >
                       Limit
@@ -463,7 +463,7 @@ export default function AssetDetailPage() {
                 {/* Limit Price (only for limit orders) */}
                 {orderType === 'limit' && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-foreground-muted mb-2">
                       Limit Price (USD)
                     </label>
                     <Input
@@ -479,7 +479,7 @@ export default function AssetDetailPage() {
 
                 {/* Quantity */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground-muted mb-2">
                     Quantity
                   </label>
                   <Input
@@ -489,11 +489,11 @@ export default function AssetDetailPage() {
                     onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                     className="w-full"
                   />
-                  <div className="mt-2 flex justify-between text-xs text-gray-500">
+                  <div className="mt-2 flex justify-between text-xs text-foreground-muted">
                     <span>Available: {tradeMode === 'buy' ? formatNumber(availableTokens) : formatNumber(userTokenBalance)}</span>
                     <button
                       onClick={() => setQuantity(tradeMode === 'buy' ? availableTokens : userTokenBalance)}
-                      className="text-blue-600 hover:text-blue-700 font-medium"
+                      className="text-primary hover:text-primary-hover font-medium"
                     >
                       Max
                     </button>
@@ -501,25 +501,25 @@ export default function AssetDetailPage() {
                 </div>
 
                 {/* Order Summary */}
-                <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+                <div className="bg-card-muted border border-primary/10 p-4 rounded-lg space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Price per Token</span>
+                    <span className="text-foreground-muted">Price per Token</span>
                     <span className="font-medium">
                       {formatCurrency(orderType === 'market' ? pricePerToken : limitPrice)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Quantity</span>
+                    <span className="text-foreground-muted">Quantity</span>
                     <span className="font-medium">{formatNumber(quantity)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Order Type</span>
-                    <span className="font-medium capitalize">{orderType}</span>
+                    <span className="text-foreground-muted">Order Type</span>
+                    <span className="font-medium capitalize text-foreground">{orderType}</span>
                   </div>
-                  <div className="border-t pt-2 mt-2">
+                  <div className="border-t border-primary/10 pt-2 mt-2">
                     <div className="flex justify-between">
                       <span className="font-semibold">Total</span>
-                      <span className={`font-bold text-lg ${tradeMode === 'buy' ? 'text-green-600' : 'text-red-600'}`}>
+                      <span className={`font-bold text-lg ${tradeMode === 'buy' ? 'text-success' : 'text-danger'}`}>
                         {formatCurrency(totalCost)}
                       </span>
                     </div>
@@ -532,8 +532,8 @@ export default function AssetDetailPage() {
                   disabled={transacting || !user.isVerified || quantity <= 0}
                   className={`w-full py-3 ${
                     tradeMode === 'buy'
-                      ? 'bg-green-600 hover:bg-green-700'
-                      : 'bg-red-600 hover:bg-red-700'
+                      ? 'bg-success hover:bg-success-hover'
+                      : 'bg-danger hover:bg-danger-hover'
                   }`}
                 >
                   {transacting ? (
@@ -547,7 +547,7 @@ export default function AssetDetailPage() {
                 </Button>
 
                 {!user.isVerified && (
-                  <p className="text-sm text-amber-600 text-center">
+                  <p className="text-sm text-warning text-center">
                     {user.kycStatus !== 'approved' 
                       ? 'Complete KYC verification to trade' 
                       : 'Connect wallet to trade'}
@@ -555,7 +555,7 @@ export default function AssetDetailPage() {
                 )}
 
                 {/* Info Text */}
-                <div className="text-xs text-gray-500 space-y-1 pt-2 border-t">
+                <div className="text-xs text-foreground-muted space-y-1 pt-2 border-t">
                   <p>• Trades execute on Hedera blockchain</p>
                   <p>• Transactions require HashPack wallet signature</p>
                   <p>• Network fees may apply</p>
